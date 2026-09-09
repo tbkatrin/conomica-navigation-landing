@@ -1,0 +1,72 @@
+/* Design tokens — Figma "Navigation landing V1"
+   fileKey: JI3xuwFG1gkfqdqiRLTYB0, page `7:3169`
+   Часть значений заведена в Figma Variables (Green / Black / Backgrounds/Primary /
+   Landing/text body/desktop/caption), остальное прочитано с нод напрямую.
+
+   Макет = два экрана:
+   • интро-лоадер  (`screen 0` / `Group 347`) — тёмно-зелёный фон, орбита;
+   • витрина        (`screen 2`)               — лавандовый фон, мокапы iPhone.
+   Обе сцены desktop-only. */
+
+:root {
+  /* ---- Brand ---- */
+  --color-ink: #17171a; /* Figma Black */
+  --color-brand: #00703e; /* Figma Green — знак логотипа, акценты в мокапах */
+
+  /* ---- Интро-лоадер ---- */
+  --color-loader-bg: #0a4028; /* тёмно-зелёная сцена лоадера */
+  --color-loader-dot: #f2faf2; /* точка орбиты / финальная точка */
+
+  /* ---- Продуктовая витрина ---- */
+  --color-showcase-bg: #e2e6ef; /* лавандовый фон (= фон страницы) */
+  --color-showcase-heading: #010610; /* тег-пилюля и заголовки H2 */
+  --color-showcase-tag-bg: #f4f4f4;
+  --color-showcase-tag-border: #9c9c9c;
+
+  /* ---- Мокап iPhone ---- */
+  --color-device-body: #242528;
+  --color-device-frame: #38393d;
+  --color-device-screen: #f5f5f5;
+
+  /* ---- UI внутри мокапа ---- */
+  --color-ui-heading: #0a1833; /* суммы */
+  --color-ui-muted: #626d7a; /* подписи */
+  --color-ui-faint: #8b95a5; /* третичные подписи */
+  --color-ui-border: #e6e8eb; /* границы карточек */
+  --color-ui-accent-bg: #e6f4ed; /* фон кнопки «Создать новый аванс» */
+
+  /* ---- Typography (Inter, одна семья) ---- */
+  --font-family: "Inter", ui-sans-serif, system-ui, sans-serif;
+  --fw-regular: 400;
+  --fw-medium: 500;
+  --fw-semibold: 600;
+  --fw-bold: 700;
+
+  /* Landing/text body/desktop/caption — подписи орбиты */
+  --fs-caption: 14px;
+  --lh-caption: 1.24;
+  --ls-caption: 0.02em; /* uppercase */
+  /* Landing/text body/desktop/tag — тег-пилюля */
+  --fs-tag: 12px;
+  --lh-tag: 0.94;
+  --ls-tag: -0.01em; /* uppercase */
+  /* Landing/headings/desktop/h2 heading — заголовок продукта */
+  --fs-h2: 46px;
+  --lh-h2: 0.98;
+  --ls-h2: -0.05em;
+
+  /* ---- Radius ---- */
+  --radius-card: 16px;
+  --radius-device: 56px;
+  --radius-device-screen: 48px;
+
+  /* ---- Интро-лоадер: геометрия орбиты (сцена 1102 × 620) ---- */
+  --loader-ring-diameter: 516px; /* ≈ 46.8cqw */
+  --loader-dot-size: 19px;
+  /* 6 точек, углы по часовой от 12 часов: 0, 54, 122, 180, 238, 300 */
+
+  /* ---- Витрина: размеры блока ---- */
+  --block-width: 372px;
+  --device-width: 344px;
+  --block-gap: 72px; /* заголовок ↔ мокап */
+}
