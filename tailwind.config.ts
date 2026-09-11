@@ -18,7 +18,7 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        base: "#EEF2EC", // верх градиента страницы (низ — #C5C7CD)
+        base: "#F2FAF2", // фон home 3
         ink: "#17171A", // Figma Black
         brand: {
           DEFAULT: "#00703E", // Figma Green — знак логотипа, кнопка (default)

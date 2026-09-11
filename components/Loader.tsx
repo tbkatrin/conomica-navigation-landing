@@ -42,11 +42,10 @@ import {
 
 /* ── цвета из макета ── */
 const GREEN = "#0A4028"; // фон screen 0 / точка screen 1
-const LAVENDER = "#EEF2EC"; // фон screen 1 = верх градиента героя (бесшовный переход)
+const LAVENDER = "#F2FAF2"; // фон screen 1 = фон home 3 (бесшовный переход)
 const WHITE_DOT = "#F2FAF2"; // точка screen 0
 
 /* ── геометрия ── */
-const RING_RADIUS_CQW = RING_DIAMETER_CQW / 2; // радиус орбиты, cqw
 const DOT_HALF_CQW = 0.862; // половина точки (19/1102), cqw
 const ARC_COUNT = 6;
 /** порядок появления «спиц» при сборке — снизу против часовой (как в макете) */
@@ -55,10 +54,18 @@ const SPOKE_ORDER = [3, 4, 5, 0, 1, 2];
 type Phase =
   "build" | "hold" | "strip" | "spiral" | "collapse" | "handoff" | "done";
 
-/* ── тайминги фаз, мс ── */
+/**
+ * Общий множитель темпа интро. 1 — как в макете (~5.2 c), >1 — медленнее
+ * пропорционально: масштабирует и тайминги фаз, и длительности/задержки анимаций.
+ */
+const PACE = 1.5;
+/** секунды framer-motion с учётом PACE */
+const t = (s: number) => s * PACE;
+
+/* ── тайминги фаз, мс (до умножения на PACE) ── */
 const SEQUENCE: Array<[Phase, number]> = [
-  ["build", 2200], // сборка кольца (дуга + точка + подпись по кругу) + лого
-  ["hold", 450], // собранное состояние
+  ["build", 3000], // сборка кольца (дуга + точка + подпись по кругу) + лого
+  ["hold", 650], // собранное состояние
   ["strip", 480], // подписи/лого гаснут → кольцо + точки (Variant19)
   ["spiral", 700], // раскрутка в вертушку, точки к центру (Variant20)
   ["collapse", 460], // схлопывание в белую точку (Variant21)
@@ -93,8 +100,8 @@ function arcPath(i: number): string {
   return `M ${x0} ${y0} A ${ARC_R} ${ARC_R} 0 ${large} 1 ${x1} ${y1}`;
 }
 
-/** задержка появления спицы i при сборке, сек */
-const spokeDelay = (i: number) => 0.2 + SPOKE_ORDER.indexOf(i) * 0.26;
+/** задержка появления спицы i при сборке, сек (с учётом PACE) */
+const spokeDelay = (i: number) => t(0.25 + SPOKE_ORDER.indexOf(i) * 0.31);
 
 export default function Loader() {
   const reduce = useReducedMotion();
@@ -123,7 +130,7 @@ export default function Loader() {
       }
       const [ph, dur] = SEQUENCE[idx++];
       setPhase(ph);
-      timer = window.setTimeout(next, dur);
+      timer = window.setTimeout(next, dur * PACE);
     };
     next();
     return () => window.clearTimeout(timer);
@@ -156,10 +163,10 @@ export default function Loader() {
       ? { rotate: 100, scale: 0.62 }
       : { rotate: 0, scale: 1 };
   const ringSpinT: Transition = isCollapsePlus
-    ? { duration: 0.5, ease: "easeIn" }
+    ? { duration: t(0.5), ease: "easeIn" }
     : isSpiral
-      ? { duration: 0.75, ease: [0.45, 0, 0.35, 1] }
-      : { duration: 0.4, ease: "easeOut" };
+      ? { duration: t(0.75), ease: [0.45, 0, 0.35, 1] }
+      : { duration: t(0.4), ease: "easeOut" };
 
   /* доля скрытой части дуги: 0 — целая, >0 — короткая «лопасть» вертушки */
   const arcHidden = isSpiral ? 0.4 : isCollapsePlus ? 0.55 : 0;
@@ -180,8 +187,8 @@ export default function Loader() {
           animate={{ backgroundColor: handoff ? LAVENDER : GREEN }}
           exit={{ opacity: 0 }}
           transition={{
-            backgroundColor: { duration: 0.5, ease: "easeInOut" },
-            opacity: { duration: 0.4, ease: "easeOut" },
+            backgroundColor: { duration: t(0.5), ease: "easeInOut" },
+            opacity: { duration: t(0.4), ease: "easeOut" },
           }}
         >
           <div
@@ -218,11 +225,33 @@ export default function Loader() {
                       fill="none"
                       className="absolute inset-0 h-full w-full overflow-visible"
                     >
+                      {i === 0 && (
+                        <defs>
+                          {/* белое свечение дуг: X0 Y0, blur 20px (≈2 ед. viewBox) */}
+                          <filter
+                            id="arcGlow"
+                            x="-60%"
+                            y="-60%"
+                            width="220%"
+                            height="220%"
+                            colorInterpolationFilters="sRGB"
+                          >
+                            <feDropShadow
+                              dx="0"
+                              dy="0"
+                              stdDeviation="2"
+                              floodColor="#FFFFFF"
+                              floodOpacity="1"
+                            />
+                          </filter>
+                        </defs>
+                      )}
                       <motion.path
                         d={arcPath(i)}
                         stroke="rgba(255,255,255,0.85)"
                         strokeWidth={0.45}
                         strokeLinecap="round"
+                        filter="url(#arcGlow)"
                         strokeDasharray={arcLen(i)}
                         initial={{ opacity: 0, strokeDashoffset: arcLen(i) }}
                         animate={{
@@ -231,12 +260,12 @@ export default function Loader() {
                         }}
                         transition={{
                           opacity: {
-                            duration: 0.3,
+                            duration: t(0.3),
                             delay: phase === "build" ? spokeDelay(i) : 0,
                             ease: "easeOut",
                           },
                           strokeDashoffset: {
-                            duration: phase === "build" ? 0.55 : 0.5,
+                            duration: phase === "build" ? t(0.55) : t(0.5),
                             delay: phase === "build" ? spokeDelay(i) : 0,
                             ease: "easeInOut",
                           },
@@ -245,37 +274,41 @@ export default function Loader() {
                     </svg>
                   ))}
 
-                  {/* точки — дополнительно подтягиваются к центру в вертушке */}
+                  {/* точки — центр каждой точно на дуге (радиус 50% рамки кольца),
+                      слой дополнительно подтягивается к центру в вертушке */}
                   <motion.div
                     className="absolute inset-0 origin-center"
                     initial={{ scale: 1 }}
                     animate={{ scale: dotPull }}
                     transition={ringSpinT}
                   >
-                    {ORBIT.map((p, i) => (
-                      <div
-                        key={i}
-                        className="absolute left-1/2 top-1/2"
-                        style={{ transform: `rotate(${p.angle}deg)` }}
-                      >
+                    {ORBIT.map((p, i) => {
+                      const a = toRad(p.angle - 90);
+                      const cx = r3(50 + 50 * Math.cos(a));
+                      const cy = r3(50 + 50 * Math.sin(a));
+                      return (
                         <motion.span
-                          className="block rounded-full bg-loader-dot drop-shadow-[0_0_10px_rgba(255,255,255,0.85)]"
+                          key={i}
+                          className="absolute block rounded-full bg-loader-dot drop-shadow-[0_0_10px_rgba(255,255,255,0.85)]"
                           initial={{ scale: 0 }}
                           animate={{ scale: 1 }}
                           transition={{
-                            delay: phase === "build" ? spokeDelay(i) + 0.05 : 0,
-                            duration: 0.4,
+                            delay:
+                              phase === "build" ? spokeDelay(i) + t(0.05) : 0,
+                            duration: t(0.4),
                             ease: [0.34, 1.56, 0.64, 1],
                           }}
                           style={{
+                            left: `${cx}%`,
+                            top: `${cy}%`,
                             width: "1.724cqw",
                             height: "1.724cqw",
                             marginLeft: `calc(-${DOT_HALF_CQW}cqw)`,
-                            marginTop: `calc(-${RING_RADIUS_CQW}cqw - ${DOT_HALF_CQW}cqw)`,
+                            marginTop: `calc(-${DOT_HALF_CQW}cqw)`,
                           }}
                         />
-                      </div>
-                    ))}
+                      );
+                    })}
                   </motion.div>
                 </motion.div>
               </div>
@@ -291,9 +324,11 @@ export default function Loader() {
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: stripped ? 0 : 1, y: 0 }}
                   transition={{
-                    duration: stripped ? 0.3 : 0.5,
+                    duration: stripped ? t(0.3) : t(0.5),
                     delay:
-                      stripped || phase !== "build" ? 0 : spokeDelay(i) + 0.1,
+                      stripped || phase !== "build"
+                        ? 0
+                        : spokeDelay(i) + t(0.1),
                     ease: "easeOut",
                   }}
                   style={{
@@ -331,8 +366,8 @@ export default function Loader() {
                   scale: stripped ? 0.92 : 1,
                 }}
                 transition={{
-                  duration: stripped ? 0.3 : 0.5,
-                  delay: stripped || phase !== "build" ? 0 : 1.6,
+                  duration: stripped ? t(0.3) : t(0.5),
+                  delay: stripped || phase !== "build" ? 0 : t(2.05),
                   ease: "easeOut",
                 }}
                 style={{ x: "-50%", y: "-50%", gap: "2.18cqw" }}
@@ -365,9 +400,15 @@ export default function Loader() {
               backgroundColor: handoff ? GREEN : WHITE_DOT,
             }}
             transition={{
-              opacity: { duration: 0.3, delay: phase === "collapse" ? 0.2 : 0 },
-              scale: { duration: 0.3, delay: phase === "collapse" ? 0.2 : 0 },
-              backgroundColor: { duration: 0.5, ease: "easeInOut" },
+              opacity: {
+                duration: t(0.3),
+                delay: phase === "collapse" ? t(0.2) : 0,
+              },
+              scale: {
+                duration: t(0.3),
+                delay: phase === "collapse" ? t(0.2) : 0,
+              },
+              backgroundColor: { duration: t(0.5), ease: "easeInOut" },
             }}
             style={{ x: "-50%", y: "-50%" }}
           />

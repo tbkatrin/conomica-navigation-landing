@@ -30,7 +30,7 @@ export const ORBIT: OrbitPoint[] = [
   {
     angle: 0,
     label: "более 3 тысяч инвесторов",
-    labelInset: [3, 0, 0, 0],
+    labelInset: [0.5, 0, 0, 0],
     nowrap: true,
   },
   {
