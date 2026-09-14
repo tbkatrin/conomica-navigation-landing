@@ -250,7 +250,7 @@ export default function Hero() {
         <div className="relative mx-auto w-[1409px]">
           <div className="flex w-full flex-col items-center gap-[16px]">
           {/* верхняя часть */}
-          <div className="flex w-full items-center gap-[80px] py-[40px] pl-[80px] pr-[48px]">
+          <div className="flex w-full items-center gap-[80px] py-[40px] pl-[24px] pr-[48px]">
             <OrbitMark />
 
             <div className="flex flex-1 items-stretch justify-between">
