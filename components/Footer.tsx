@@ -1,45 +1,81 @@
+"use client";
+
 /**
  * Footer — подвал лендинга. Макет Figma "Navigation landing V1" / `home 4`,
  * узел `Footer desktop` (2130:3457, fileKey JI3xuwFG1gkfqdqiRLTYB0).
  * Макетная ширина 1440 — как у Hero, использует тот же класс `.home-fit`
  * (см. globals.css), так что масштабируется вместе с героем на широких экранах.
  *
- * Белый фон, три колонки — «Прямая связь» (2 карточки с CTA), «Мы в
- * социальных сетях» (QR + TenChat/VK), «Компании группы» (5 юрлиц с ИНН).
+ * Фон — вертикальный градиент `#E7F4E7` → `#F2FAF2`, три колонки с `justify-between` — «Прямая связь» (карточки
+ * «Бизнесу» / «Инвесторам» с CTA), «Мы в социальных сетях» (QR + TenChat/VK,
+ * белые карточки, зеленеют на hover), «Компании группы» (5 юрлиц с ИНН).
  * Ниже — разделительная линия, телефон + слоган, логотип группы компаний.
  */
 
 /* eslint-disable @next/next/no-img-element */
+
+import { useState, type ReactNode } from "react";
+
+import RequestModal from "@/components/RequestModal";
 
 const H3 =
   "text-[28px] font-medium leading-[1.08] tracking-[-0.84px] text-[#292A26]";
 
 const CONTACT_CARDS = [
   {
-    id: "investor",
-    text: "Вы — инвестор, изучаете возможность размещения средств в сделки, связанные с дебиторской задолженностью",
-    cta: "Оставить заявку на консультацию",
+    id: "business",
+    title: "Бизнесу",
+    text: "Вы — бизнес, хотите привлечь средства, используя дебиторскую задолженность",
+    cta: (
+      <>
+        Больше о продуктах
+        <br />
+        Conomica
+      </>
+    ),
+    ctaTextClass: "w-[164px] shrink-0",
+    cardClass: "justify-center",
   },
   {
-    id: "business",
-    text: "Вы — бизнес, хотите привлечь средства, используя дебиторскую задолженность",
-    cta: "Больше о продуктах Conomica",
+    id: "investor",
+    title: "Инвесторам",
+    text: "Вы — инвестор, изучаете возможность размещения средств в сделки, связанные с дебиторской задолженностью",
+    cta: "Оставить заявку на консультацию",
+    ctaTextClass: "min-w-0 flex-1",
+    cardClass: "h-[207px] justify-end",
   },
 ];
 
 const COMPANIES = [
-  { name: 'ООО Управляющая компания "Кономика"', inn: "9728069364" },
-  { name: 'ООО "Кономика"', inn: "9728069364" },
+  { name: 'ООО  Управляющая компания "Кономика"', inn: "9728069364" },
+  { name: 'ООО  "Кономика"', inn: "9728069364" },
   { name: 'ООО "Кономика-займы для бизнеса"', inn: "9728131284" },
   { name: "ООО «Технологии Скоринга»", inn: "7728468083" },
   { name: "ООО «Про-Фактор»", inn: "7709976250" },
 ];
 
 /* стрелка кнопки — зелёная, на белом кружке (обратная схема цвету кнопки в hero) */
-function ArrowButton({ label }: { label: string }) {
+function ArrowButton({
+  label,
+  textClass,
+  onClick,
+}: {
+  label: ReactNode;
+  textClass: string;
+  onClick?: () => void;
+}) {
   return (
-    <div className="flex h-[48px] w-[355px] items-center justify-end gap-[16px] rounded-[22px] bg-[#00703E] py-[16px] pl-[24px] pr-[8px] shadow-[0px_2px_1px_0_rgba(0,0,0,0.04)]">
-      <span className="flex-1 whitespace-nowrap text-center text-[16px] font-medium leading-[1.2] tracking-[0.16px] text-white">
+    <button
+      type="button"
+      onClick={onClick}
+      className="flex w-full items-center justify-center gap-[16px] rounded-[12px] bg-[#00703E] px-[16px] py-[8px] shadow-[0px_2px_1px_0_rgba(0,0,0,0.04)]"
+    >
+      <span
+        className={
+          "text-center text-[16px] font-medium leading-[1.2] tracking-[0.16px] text-white " +
+          textClass
+        }
+      >
         {label}
       </span>
       <span className="flex h-[31px] w-[31px] shrink-0 rotate-90 items-center justify-center rounded-[27px] bg-white drop-shadow-[8px_6px_7.8px_rgba(0,0,0,0.14)]">
@@ -55,42 +91,58 @@ function ArrowButton({ label }: { label: string }) {
           />
         </svg>
       </span>
-    </div>
+    </button>
   );
 }
 
 export default function Footer() {
+  const [modalOpen, setModalOpen] = useState(false);
+
   return (
-    <footer className="relative flex w-full justify-center overflow-x-hidden bg-white">
-      <div className="home-fit w-[1440px] shrink-0 backdrop-blur-[10px]">
+    <footer className="relative flex w-full justify-center bg-gradient-to-b from-[#E7F4E7] to-[#F2FAF2]">
+      <div className="home-fit w-[1440px] shrink-0 bg-gradient-to-b from-[#E7F4E7] to-[#F2FAF2] backdrop-blur-[10px]">
         <div className="flex w-full flex-col items-start gap-[40px] px-[80px] py-[64px]">
           {/* верхняя часть: три колонки */}
-          <div className="flex w-full items-start gap-[72px]">
+          <div className="flex w-full items-start justify-between">
             {/* Прямая связь */}
-            <div className="flex w-[411px] shrink-0 flex-col items-start gap-[32px]">
+            <div className="flex w-[285px] shrink-0 flex-col items-start gap-[32px]">
               <p className={H3}>Прямая связь</p>
-              <div className="flex w-full flex-col items-start gap-[8px]">
+              <div className="flex w-full flex-col items-start gap-[16px]">
                 {CONTACT_CARDS.map((c) => (
                   <div
                     key={c.id}
-                    className="flex w-full flex-col items-center justify-center gap-[12px] rounded-[16px] bg-[#F2FAF2] p-[16px]"
+                    className={
+                      "flex w-full flex-col items-center gap-[16px] rounded-[16px] bg-white px-[32px] py-[24px] " +
+                      c.cardClass
+                    }
                   >
-                    <div className="flex w-full items-center justify-center px-[16px]">
-                      <p className="flex-1 text-[14px] font-medium leading-[16px] tracking-[-0.14px] text-[#292A26]">
+                    <div className="flex w-full flex-col items-center justify-center gap-[12px]">
+                      <p className="w-full text-[18px] font-normal leading-[1.32] tracking-[-0.36px] text-[#00703E]">
+                        {c.title}
+                      </p>
+                      <p className="w-full text-[14px] font-medium leading-[16px] tracking-[-0.14px] text-[#292A26]">
                         {c.text}
                       </p>
                     </div>
-                    <ArrowButton label={c.cta} />
+                    <ArrowButton
+                      label={c.cta}
+                      textClass={c.ctaTextClass}
+                      onClick={
+                        c.id === "investor"
+                          ? () => setModalOpen(true)
+                          : undefined
+                      }
+                    />
                   </div>
                 ))}
               </div>
             </div>
 
             {/* Мы в социальных сетях */}
-            <div className="flex shrink-0 flex-col items-start justify-center gap-[32px]">
+            <div className="flex w-[319px] shrink-0 flex-col items-start justify-center gap-[32px]">
               <p className={H3}>Мы в социальных сетях</p>
               <div className="flex w-[319px] items-center gap-[8px]">
-                <div className="group flex h-[271px] w-[186px] shrink-0 flex-col items-center justify-center gap-[12px] rounded-[12px] bg-[#F2FAF2] px-[16px] py-[24px] transition-colors duration-200 hover:bg-[#00703E]">
+                <div className="group flex h-[271px] w-[186px] shrink-0 flex-col items-center justify-center gap-[12px] rounded-[12px] bg-white px-[16px] py-[24px] transition-colors duration-200 hover:bg-[#00703E]">
                   <img
                     src="/qr-conomica.png"
                     alt="QR-код Conomica"
@@ -108,7 +160,7 @@ export default function Footer() {
                   </div>
                 </div>
                 <div className="flex h-[271px] w-[125px] shrink-0 flex-col items-start gap-[8px]">
-                  <div className="relative flex w-full flex-1 items-center justify-center overflow-hidden rounded-[8px] bg-[#F2FAF2] p-[10px] transition-colors duration-200 hover:bg-[#00703E]">
+                  <div className="relative flex w-full flex-1 items-center justify-center overflow-hidden rounded-[8px] bg-white p-[10px] transition-colors duration-200 hover:bg-[#00703E]">
                     <span
                       aria-hidden
                       className="absolute left-[44px] top-[42px] h-[35px] w-[38px] bg-white"
@@ -119,7 +171,7 @@ export default function Footer() {
                       className="relative h-[76.8px] w-[71px]"
                     />
                   </div>
-                  <div className="flex w-full flex-1 items-center justify-center rounded-[8px] bg-[#F2FAF2] p-[10px] transition-colors duration-200 hover:bg-[#00703E]">
+                  <div className="flex w-full flex-1 items-center justify-center rounded-[8px] bg-white p-[10px] transition-colors duration-200 hover:bg-[#00703E]">
                     <img
                       src="/vk.svg"
                       alt="ВКонтакте"
@@ -131,7 +183,7 @@ export default function Footer() {
             </div>
 
             {/* Компании группы */}
-            <div className="flex flex-1 flex-col items-start gap-[32px]">
+            <div className="flex w-[287px] shrink-0 flex-col items-start gap-[32px]">
               <p className={H3}>Компании группы</p>
               <div className="flex w-full flex-col items-start gap-[24px]">
                 {COMPANIES.map((co) => (
@@ -139,18 +191,15 @@ export default function Footer() {
                     key={co.inn + co.name}
                     className="flex w-full flex-col items-start gap-[8px]"
                   >
-                    <p className="w-full text-[18px] font-normal leading-[1.32] tracking-[-0.36px] text-[#292A26]">
+                    <p className="w-full whitespace-pre-wrap text-[14px] font-medium leading-[16px] tracking-[-0.14px] text-[#292A26]">
                       {co.name}
                     </p>
-                    <div className="flex items-start gap-[8px]">
-                      <span className="text-[14px] font-medium leading-[16px] tracking-[-0.14px] text-[#626262]">
-                        ИНН
+                    <div aria-hidden className="h-px w-full bg-[#D9D9D9]" />
+                    <div className="flex items-start gap-[8px] whitespace-nowrap">
+                      <span className="text-[14px] font-normal leading-[1.2] tracking-[-0.14px] text-[#626262]">
+                        ИНН :
                       </span>
-                      <span
-                        aria-hidden
-                        className="h-[16px] w-px bg-[#626262]"
-                      />
-                      <span className="text-[14px] font-medium leading-[16px] tracking-[-0.14px] text-[#626262]">
+                      <span className="text-[14px] font-normal leading-[1.2] tracking-[-0.14px] text-[#626262]">
                         {co.inn}
                       </span>
                     </div>
@@ -161,7 +210,7 @@ export default function Footer() {
           </div>
 
           {/* разделитель */}
-          <div aria-hidden className="h-px w-full bg-[#626262]" />
+          <div aria-hidden className="h-px w-full bg-[#0A4028]" />
 
           {/* телефон + логотип группы компаний */}
           <div className="flex w-full items-center justify-between">
@@ -187,6 +236,8 @@ export default function Footer() {
           </div>
         </div>
       </div>
+
+      <RequestModal open={modalOpen} onClose={() => setModalOpen(false)} />
     </footer>
   );
 }

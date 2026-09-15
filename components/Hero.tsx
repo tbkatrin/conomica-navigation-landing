@@ -1,3 +1,5 @@
+"use client";
+
 /**
  * Hero — главный экран навигационного лендинга Conomica.
  * Макет Figma "Navigation landing V1" / `home 3` (node 2092:199,
@@ -11,6 +13,8 @@
  */
 
 /* eslint-disable @next/next/no-img-element */
+
+import { motion } from "framer-motion";
 
 /* углы 6 точек орбиты (как в лоадере), градусы от верха по часовой */
 const ORBIT_ANGLES = [0, 54, 122, 180, 238, 300];
@@ -152,7 +156,14 @@ function Seal({
   const pathId = "seal-path-" + idx;
   return (
     <div className={"pointer-events-none absolute select-none " + className}>
-      <svg viewBox="0 0 184 184" className="h-full w-full" aria-hidden>
+      <motion.svg
+        viewBox="0 0 184 184"
+        className="h-full w-full"
+        aria-hidden
+        style={{ transformOrigin: "50% 50%" }}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 40, repeat: Infinity, ease: "linear" }}
+      >
         <defs>
           {/* почти полный круг r=76, старт снизу, текст по часовой, ровно по верху */}
           <path
@@ -186,7 +197,7 @@ function Seal({
           d="M92 69C92 81.7 81.7 92 69 92C81.7 92 92 102.3 92 115C92 102.3 102.3 92 115 92C102.3 92 92 81.7 92 69Z"
           fill="#ffffff"
         />
-      </svg>
+      </motion.svg>
     </div>
   );
 }
@@ -199,7 +210,7 @@ function Block({ data, idx }: { data: BlockData; idx: number }) {
         target="_blank"
         rel="noopener noreferrer"
         aria-label={data.title + " — " + data.desc}
-        className="relative flex h-[420px] w-[459px] flex-col justify-between overflow-hidden rounded-[16px] p-[40px] shadow-[0px_0px_13px_0px_rgba(215,216,214,0.6)] outline-none transition-[filter] duration-200 hover:brightness-[1.05] focus-visible:ring-2 focus-visible:ring-white"
+        className="relative flex h-[420px] w-[459px] flex-col justify-between overflow-hidden rounded-[16px] p-[40px] shadow-[0px_0px_13px_0px_rgba(215,216,214,0.6)] outline-none transition-all duration-300 ease-out hover:-translate-y-[6px] hover:shadow-[0px_20px_32px_0px_rgba(20,40,30,0.22)] hover:brightness-[1.05] focus-visible:ring-2 focus-visible:ring-white"
         style={{ backgroundColor: data.bg }}
       >
         <Seal text={data.seal} idx={idx} className={data.sealClass} />
@@ -212,7 +223,7 @@ function Block({ data, idx }: { data: BlockData; idx: number }) {
             className="inline-flex h-[27px] w-fit items-center justify-center whitespace-nowrap rounded-[12px] border border-white px-[10px] text-[12px] font-medium uppercase leading-none tracking-[-0.12px] text-white"
             style={{ backgroundColor: data.labelBg }}
           >
-            {data.label}
+            <span className="relative top-[0.5px]">{data.label}</span>
           </span>
           <h3 className="text-[36px] font-medium leading-[1.08] tracking-[1.08px] text-white">
             {data.title}
@@ -234,7 +245,7 @@ function Block({ data, idx }: { data: BlockData; idx: number }) {
 
 export default function Hero() {
   return (
-    <section className="relative flex min-h-screen w-full justify-center overflow-x-hidden bg-[#F2FAF2]">
+    <section className="relative flex min-h-screen w-full justify-center bg-[#F2FAF2]">
       <h1 className="sr-only">Экосистема fintech продуктов Conomica</h1>
 
       {/* фиксированная композиция 1440; на широких экранах масштабируется
