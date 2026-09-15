@@ -41,7 +41,7 @@ const CONTACT_CARDS = [
     title: "Инвесторам",
     text: "Вы — инвестор, изучаете возможность размещения средств в сделки, связанные с дебиторской задолженностью",
     cta: "Оставить заявку на консультацию",
-    ctaTextClass: "min-w-0 flex-1 text-[16px]",
+    ctaTextClass: "min-w-0 flex-1 text-[13px]",
     cardClass: "h-[207px] justify-end",
   },
 ];
