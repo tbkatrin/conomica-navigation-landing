@@ -88,7 +88,7 @@ const OPTIONS = [
     badge: "2 вариант инвестиций",
     text: "Приобретение долговых требований компаний в сегменте МСБ",
     seal: "РЕЗИДЕНТ СКОЛКОВО",
-    sealClass: "left-[210px] top-[-84px] h-[123px] w-[123px]",
+    sealClass: "left-[210px] top-[-60px] h-[123px] w-[123px]",
   },
 ];
 
