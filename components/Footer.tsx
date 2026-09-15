@@ -33,7 +33,7 @@ const CONTACT_CARDS = [
         Conomica
       </>
     ),
-    ctaTextClass: "w-[164px] shrink-0",
+    ctaTextClass: "min-w-0 flex-1 text-[13px]",
     cardClass: "justify-center",
   },
   {
@@ -41,7 +41,7 @@ const CONTACT_CARDS = [
     title: "Инвесторам",
     text: "Вы — инвестор, изучаете возможность размещения средств в сделки, связанные с дебиторской задолженностью",
     cta: "Оставить заявку на консультацию",
-    ctaTextClass: "min-w-0 flex-1",
+    ctaTextClass: "min-w-0 flex-1 text-[16px]",
     cardClass: "h-[207px] justify-end",
   },
 ];
@@ -72,7 +72,7 @@ function ArrowButton({
     >
       <span
         className={
-          "text-center text-[16px] font-medium leading-[1.2] tracking-[0.16px] text-white " +
+          "text-center font-medium leading-[1.2] tracking-[0.16px] text-white " +
           textClass
         }
       >
