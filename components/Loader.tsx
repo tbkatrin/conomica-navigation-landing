@@ -107,6 +107,17 @@ export default function Loader() {
   const reduce = useReducedMotion();
   const [phase, setPhase] = useState<Phase>("build");
 
+  // страница всегда должна открываться сверху — без этого браузер может
+  // восстановить старую позицию скролла (history scroll restoration) под
+  // зафиксированным лоадером, и после интро окажешься не наверху, а там,
+  // где был проскроллен раньше (например, в футере)
+  useEffect(() => {
+    if ("scrollRestoration" in window.history) {
+      window.history.scrollRestoration = "manual";
+    }
+    window.scrollTo(0, 0);
+  }, []);
+
   // мгновенный пропуск интро для превью/отладки: `?intro=off`
   const [skip, setSkip] = useState(false);
   useEffect(() => {
