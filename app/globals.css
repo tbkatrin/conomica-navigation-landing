@@ -1,53 +1,26 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
-@layer base {
-  :root {
-    color-scheme: light;
-  }
+:root {
+  --background: #ffffff;
+  --foreground: #161616;
 
-  html {
-    -webkit-text-size-adjust: 100%;
-  }
-
-  body {
-    @apply overflow-x-hidden bg-base text-ink antialiased;
-  }
-
-  ::selection {
-    @apply bg-brand text-white;
-  }
+  /* Brand typeface (Figma: "Vela Sans" / "Vela Sans GX"). Add the real font
+     files via @font-face or next/font/local and these variables pick them
+     up automatically — until then, both fall back to system sans-serif. */
+  --font-vela-sans: "Vela Sans", ui-sans-serif, system-ui, -apple-system,
+    sans-serif;
+  --font-vela-sans-gx: "Vela Sans GX", ui-sans-serif, system-ui,
+    -apple-system, sans-serif;
 }
 
-/*
- * home 3 — фиксированная композиция 1440×~810. На широких экранах масштабируем
- * её целиком через `zoom`, но только когда по высоте достаточно места, чтобы
- * увеличенный макет не уезжал вниз. `zoom` (в отличие от transform) корректно
- * пересчитывает поток, так что центрирование и скролл работают сами.
- */
-@media (min-width: 1560px) {
-  .home-fit {
-    zoom: 1.07;
-  }
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
 }
-@media (min-width: 1800px) and (min-height: 940px) {
-  .home-fit {
-    zoom: 1.18;
-  }
-}
-@media (min-width: 2100px) and (min-height: 1060px) {
-  .home-fit {
-    zoom: 1.34;
-  }
-}
-@media (min-width: 2560px) and (min-height: 1280px) {
-  .home-fit {
-    zoom: 1.55;
-  }
-}
-@media (min-width: 3300px) and (min-height: 1640px) {
-  .home-fit {
-    zoom: 1.9;
-  }
+
+body {
+  background: var(--background);
+  color: var(--foreground);
 }

@@ -20,21 +20,21 @@ const IMAGES = [
 ];
 
 // ONLY DEFAULT EXPORT WILL BE TREATED AS A DEMO
-export default function DemoOne() {
+export default function ImageStreamHeroDemo() {
   return (
     <ImageStreamHero
       images={IMAGES}
-      className="h-[560px] w-full rounded-card border border-brand/15 bg-base"
+      className="h-[560px] w-full rounded-lg border border-neutral-200 bg-neutral-50"
     >
       <div className="relative z-10 flex h-full flex-col items-center justify-between py-12 text-center">
         <div className="px-6">
-          <h1 className="text-balance text-4xl font-medium tracking-title text-ink sm:text-5xl">
+          <h1 className="text-balance text-4xl font-medium tracking-tight text-neutral-900 sm:text-5xl">
             Your work,
             <br />
             front and centre.
           </h1>
         </div>
-        <p className="max-w-md text-balance px-6 text-sm text-ink/60">
+        <p className="max-w-md text-balance px-6 text-sm text-neutral-500">
           A hero that leads with the images instead of describing them. Swap in
           your own and the corridor rebuilds around them.
         </p>

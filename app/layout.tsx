@@ -1,37 +1,31 @@
-import type { ReactNode } from "react";
-import type { Metadata, Viewport } from "next";
-import { Inter } from "next/font/google";
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-const inter = Inter({
-  subsets: ["latin", "cyrillic"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
-  display: "swap",
+const geistSans = Geist({
+  variable: "--font-geist-sans",
+  subsets: ["latin"],
+});
+
+const geistMono = Geist_Mono({
+  variable: "--font-geist-mono",
+  subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Conomica — продукты группы компаний",
-  description:
-    "Навигация по продуктам группы компаний Conomica: инвестиционная платформа Conomica, Conomica-finance, сервис Rescore и лендинг для заёмщиков.",
-  openGraph: {
-    title: "Conomica — продукты группы компаний",
-    description:
-      "Навигация по продуктам группы компаний Conomica: инвестиционная платформа, работа с дебиторской задолженностью, проверка по ИНН.",
-    type: "website",
-  },
+  title: "Arkkhe Landing",
+  description: "Landing page",
 };
 
-export const viewport: Viewport = {
-  themeColor: "#0A4028",
-};
-
-export default function RootLayout({
-  children,
-}: Readonly<{ children: ReactNode }>) {
+export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
-    <html lang="ru" className={inter.variable}>
-      <body className="font-sans">{children}</body>
+    <html
+      lang="ru"
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+    >
+      <body className="min-h-full flex flex-col bg-white text-[#161616]">
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,15 +1,13 @@
-import Footer from "@/components/Footer";
+import Facts from "@/components/Facts";
 import Hero from "@/components/Hero";
-import Loader from "@/components/Loader";
+import Offer from "@/components/Offer";
 
 export default function Home() {
   return (
-    <>
-      <Loader />
-      <main>
-        <Hero />
-        <Footer />
-      </main>
-    </>
+    <main className="flex flex-1 flex-col">
+      <Hero />
+      <Offer />
+      <Facts />
+    </main>
   );
 }
