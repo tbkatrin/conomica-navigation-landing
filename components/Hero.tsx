@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import Asset from "./Asset";
-import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
+import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium, fontVelaRegular } from "./fonts";
 
 /**
  * Redesigned hero — per Figma node 218:2027 ("Главная 1440" / frame
@@ -12,8 +12,22 @@ import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
  * flip so the two transforms don't fight over the same CSS property).
  */
 
-function NavLink({ children }: { children: ReactNode }) {
-  return <p className="shrink-0 whitespace-nowrap">{children}</p>;
+function NavLink({ children, href }: { children: ReactNode; href?: string }) {
+  const className = `shrink-0 whitespace-nowrap border-b border-[#161616] pb-[2px] text-[14px] leading-[1.4] tracking-[0.14px] text-[#161616] transition-colors hover:border-[#0EAD66] hover:text-[#0EAD66] ${fontVelaRegular}`;
+
+  if (href) {
+    return (
+      <a href={href} className={className}>
+        {children}
+      </a>
+    );
+  }
+
+  return (
+    <button type="button" className={className}>
+      {children}
+    </button>
+  );
 }
 
 function ProductCard({ name, sub }: { name: string; sub: string }) {
@@ -56,9 +70,10 @@ export default function Hero() {
         </div>
       </div>
 
-      <div className="relative mx-auto w-full max-w-[1440px]" style={{ minHeight: 756 }}>
-        {/* Header */}
-        <header className="absolute left-0 top-0 z-10 flex w-full items-center justify-between px-[34px] py-[18px]">
+      {/* Header — fixed to the viewport so it stays put while the page scrolls,
+          instead of scrolling away with the rest of the Hero content. */}
+      <header className="fixed left-0 top-0 z-50 w-full">
+        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-[34px] py-[18px]">
           <div className="flex items-center gap-[24px]">
             <Asset src="/hero/cone.svg" alt="" className="h-[67px] w-[59px]" />
             <div className="flex flex-col items-start gap-[4px]">
@@ -74,18 +89,16 @@ export default function Hero() {
               </p>
             </div>
           </div>
-          <nav
-            className={`flex items-center gap-[32px] text-[18px] leading-none tracking-[-0.72px] text-[#191919] ${fontVelaMedium}`}
-          >
-            <NavLink>Бизнесу</NavLink>
-            <NavLink>Инвесторам</NavLink>
+          <nav className="flex items-center gap-[32px] rounded-[16px] bg-white/[0.24] px-[32px] py-[24px] backdrop-blur-[1.5px] drop-shadow-[8px_6px_16px_rgba(0,0,0,0.14)]">
+            <NavLink href="https://conomica.ru/creditors/">Бизнесу</NavLink>
+            <NavLink href="https://conomica.ru/investors">Инвесторам</NavLink>
             <NavLink>О нас</NavLink>
             <NavLink>Стать партнером</NavLink>
           </nav>
-        </header>
+        </div>
+      </header>
 
-        <div className="absolute left-[941px] top-[140px] h-px w-[467px] bg-[#e3e3e3]" />
-
+      <div className="relative mx-auto w-full max-w-[1440px]" style={{ minHeight: 756 }}>
         {/* Headline */}
         <h1
           className={`absolute right-[32px] top-[493px] w-[653px] text-right leading-[0.95] tracking-[-1.56px] text-[#191919] ${fontVelaGxExtraBold}`}

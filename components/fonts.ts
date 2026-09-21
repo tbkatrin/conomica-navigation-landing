@@ -5,6 +5,7 @@
  * both fall back to system sans-serif.
  */
 
+export const fontVelaRegular = "[font-family:var(--font-vela-sans)] font-normal";
 export const fontVelaMedium = "[font-family:var(--font-vela-sans)] font-medium";
 export const fontVelaBold = "[font-family:var(--font-vela-sans)] font-bold";
 
