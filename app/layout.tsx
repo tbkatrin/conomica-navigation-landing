@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import Loader from "@/components/Loader";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -23,7 +24,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       lang="ru"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col bg-white text-[#161616]">
+      <body className="min-h-full flex flex-col bg-[#F5F5F5] text-[#161616]">
+        <Loader />
         {children}
       </body>
     </html>

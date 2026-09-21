@@ -62,13 +62,13 @@ function SolutionCard({
   stat2: ReactNode;
 }) {
   return (
-    <div className="flex flex-1 flex-col items-start justify-between gap-[24px] self-stretch rounded-[4px] bg-[#f5f5f5] px-[32px] py-[24px]">
+    <div className="flex flex-1 flex-col items-start justify-between gap-[24px] self-stretch rounded-[16px] bg-[#f5f5f5] px-[32px] py-[24px]">
       <div className="flex w-full items-start justify-between">
         <div
           className={`flex w-[220px] flex-col items-start self-stretch ${titleGap}`}
         >
           <p
-            className={`text-[28px] leading-[0.95] tracking-[-0.56px] text-[#161616] ${fontVelaGxBold}`}
+            className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#191919] ${fontVelaGxBold}`}
           >
             {title}
           </p>
@@ -83,7 +83,7 @@ function SolutionCard({
           <Stat>{stat2}</Stat>
         </div>
       </div>
-      <button className="flex h-[48px] w-full items-center justify-center rounded-[12px] bg-[#00703e] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)]">
+      <button className="flex h-[48px] w-full items-center justify-center rounded-[12px] bg-[#00703e] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]">
         <span
           className={`text-[16px] leading-[1.2] tracking-[0.16px] text-white ${fontVelaMedium}`}
         >
@@ -96,27 +96,31 @@ function SolutionCard({
 
 export default function Offer() {
   return (
-    <section className="relative z-10 mx-auto -mt-[100px] flex w-[1280px] flex-col items-center gap-[64px] bg-white">
-      <Divider />
-
+    <section className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col items-center gap-[64px] overflow-x-hidden bg-white px-[32px]">
       <div className="flex w-full flex-col items-start gap-[32px]">
-        <div className="flex w-full items-start justify-end gap-[24px]">
-          <div className="flex w-[629px] items-start">
+        <div className="flex w-full items-start gap-[24px]">
+          <div className="flex flex-1 items-start">
             <p
               className={`[text-box-edge:cap_alphabetic] [text-box-trim:trim-both] text-[14px] uppercase leading-[1.24] tracking-[0.28px] text-[#212226] ${fontVelaMedium}`}
             >
-              Что мы можем предложить бизнесу, у которого есть дебиторка
+              Что мы можем предложить бизнесу, у которого есть дебиторка?
             </p>
           </div>
-          <p
-            className={`w-[590px] text-[38px] leading-[0.98] tracking-[-0.76px] text-[#161616] ${fontVelaGxBold}`}
-          >
-            Полный цикл от оценки до работы со взысканием для монетизации
-            дебиторской задолженности
-          </p>
+          <div className="min-w-0 flex-1">
+            <p
+              className={`w-[660px] max-w-full leading-[0.98] text-[#212226] ${fontVelaGxBold}`}
+              style={{
+                fontSize: "clamp(38px, 2.35vw, 47px)",
+                letterSpacing: "-0.03em",
+              }}
+            >
+              Полный цикл от оценки до работы со взысканием для монетизации
+              дебиторской задолженности
+            </p>
+          </div>
         </div>
 
-        <div className="flex w-full items-start gap-[16px]">
+        <div className="flex w-full items-start gap-[24px]">
           <SolutionCard
             title="Продать долг"
             titleGap="gap-[8px]"

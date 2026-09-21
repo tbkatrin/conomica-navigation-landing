@@ -1,5 +1,4 @@
 import CircularCarousel from "./ui/circular-carousel";
-import { fontVelaGxBold } from "./fonts";
 
 /**
  * "Факты о нас" — content sourced from the Figma facts section (node
@@ -46,12 +45,10 @@ const facts = [
 
 export default function Facts() {
   return (
-    <section className="relative z-10 mx-auto w-[1280px] py-[100px]">
-      <h2
-        className={`mb-[64px] text-[38px] leading-[0.98] tracking-[-0.76px] text-[#161616] ${fontVelaGxBold}`}
-      >
-        Факты о нас
-      </h2>
+    <section
+      className="relative z-10 mx-auto rounded-[24px] bg-white py-[100px]"
+      style={{ maxWidth: 1424, width: "calc(100% - 16px)" }}
+    >
       <CircularCarousel items={facts} />
     </section>
   );
