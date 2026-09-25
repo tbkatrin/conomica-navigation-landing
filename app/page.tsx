@@ -1,5 +1,4 @@
 import ContactUs from "@/components/ContactUs";
-import DecorativeCircle from "@/components/DecorativeCircle";
 import Facts from "@/components/Facts";
 import Footer from "@/components/Footer";
 import GroupStructure from "@/components/GroupStructure";
@@ -7,8 +6,8 @@ import Hero from "@/components/Hero";
 import HeroShowcase from "@/components/HeroShowcase";
 import Offer from "@/components/Offer";
 import SiteHeader from "@/components/SiteHeader";
+import StatsShowcase from "@/components/StatsShowcase";
 import Team from "@/components/Team";
-import StackSpread from "@/components/ui/stack-spread";
 
 export default function Home() {
   return (
@@ -20,12 +19,9 @@ export default function Home() {
         style={{ maxWidth: 1424, width: "calc(100% - 16px)", marginTop: 32 }}
       >
         <HeroShowcase />
-        <DecorativeCircle />
         <Offer />
       </div>
-      <div className="mx-auto w-full max-w-[1440px]">
-        <StackSpread bgColor="transparent" />
-      </div>
+      <StatsShowcase />
       <GroupStructure />
       <Team />
       <Facts />
