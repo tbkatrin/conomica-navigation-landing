@@ -9,7 +9,10 @@ import Asset from "./Asset";
  *
  * Used by StatsShowcase.tsx's alternate "Conomica в цифрах" screen (bigger,
  * with the "sequential" line-travel variant — see DecorativeCircleMark's
- * own doc comment). No longer placed between HeroShowcase and Offer.
+ * own doc comment) and, in a smaller muted-grey static form, by
+ * ContactUs.tsx's two "Свяжитесь с нами" cards (per Figma node 348:1955's
+ * "sis"/"Group 345" watermark). No longer placed between HeroShowcase and
+ * Offer.
  */
 
 const SIZE = 236;
@@ -22,10 +25,10 @@ function dotPoint(i: number, center: number, radius: number) {
 }
 
 /**
- * The animated mark itself (ring + 6 dots + centred cone) — reused by both
- * this section's Offer placement and StatsShowcase.tsx's alternate
- * "Conomica в цифрах" screen, so the two share one implementation instead
- * of two copies of the same SVG geometry.
+ * The animated mark itself (ring + 6 dots + centred cone) — reused by
+ * StatsShowcase.tsx's alternate "Conomica в цифрах" screen and, in its
+ * "muted" tone, by ContactUs.tsx's contact cards, so all three share one
+ * implementation instead of separate copies of the same SVG geometry.
  *
  * `size` lets a caller scale the whole mark (dot radius and the cone icon
  * scale proportionally, so a bigger mark doesn't look sparse). `travel`
@@ -37,20 +40,34 @@ function dotPoint(i: number, center: number, radius: number) {
  *    i+1, no midpoint split), lighting up one at a time around the ring —
  *    a single travelling line "from one point to the next" instead of two
  *    ends meeting in the middle.
+ *
+ * `tone` switches the whole mark's palette:
+ *  - "brand" (default): green dots with a glow, green travelling arcs.
+ *  - "muted": flat grey dots, no glow, no arcs at all, grey cone — a
+ *    static background watermark rather than an animated accent (matches
+ *    Figma's own greyed-out instance of this mark inside the contact
+ *    cards, node 348:1955's "Group 345"/"sis").
+ * `cone` lets a caller hide the centred cone icon entirely (the contact
+ * cards' second/"Заемщикам" instance has no cone in Figma).
  */
 export function DecorativeCircleMark({
   className,
   size = SIZE,
   travel = "bidirectional",
+  tone = "brand",
+  cone = true,
 }: {
   className?: string;
   size?: number;
   travel?: "bidirectional" | "sequential";
+  tone?: "brand" | "muted";
+  cone?: boolean;
 }) {
   const scale = size / SIZE;
   const dotRadius = DOT_RADIUS * scale;
   const center = size / 2;
   const ringRadius = size / 2 - dotRadius;
+  const isMuted = tone === "muted";
 
   const dots = Array.from({ length: DOTS }, (_, i) => dotPoint(i, center, ringRadius));
   const gapAngle = (Math.PI * 2) / DOTS;
@@ -83,28 +100,29 @@ export function DecorativeCircleMark({
     <div className={`relative shrink-0 ${className ?? ""}`} style={{ width: size, height: size }}>
       <svg viewBox={`0 0 ${size} ${size}`} className="absolute inset-0 h-full w-full">
         <circle cx={center} cy={center} r={ringRadius} fill="none" stroke="#D8D8D8" strokeWidth={1} />
-        {arcs.map((d, i) => (
-          <path
-            key={i}
-            d={d}
-            fill="none"
-            stroke="#00703E"
-            strokeWidth={1}
-            strokeLinecap="round"
-            pathLength={1}
-            strokeDasharray="1"
-            className={isSequential ? "ring-travel" : "ring-fill"}
-            style={isSequential ? { animationDelay: `${i}s` } : undefined}
-          />
-        ))}
+        {!isMuted &&
+          arcs.map((d, i) => (
+            <path
+              key={i}
+              d={d}
+              fill="none"
+              stroke="#00703E"
+              strokeWidth={1}
+              strokeLinecap="round"
+              pathLength={1}
+              strokeDasharray="1"
+              className={isSequential ? "ring-travel" : "ring-fill"}
+              style={isSequential ? { animationDelay: `${i}s` } : undefined}
+            />
+          ))}
         {dots.map((p, i) => (
           <circle
             key={i}
             cx={p.x}
             cy={p.y}
             r={dotRadius}
-            fill="#00703E"
-            style={{ filter: "drop-shadow(2px 2px 10px rgba(19,117,71,0.55))" }}
+            fill={isMuted ? "#D8D8D8" : "#00703E"}
+            style={isMuted ? undefined : { filter: "drop-shadow(2px 2px 10px rgba(19,117,71,0.55))" }}
           />
         ))}
         <style>{`
@@ -135,12 +153,14 @@ export function DecorativeCircleMark({
           }
         `}</style>
       </svg>
-      <Asset
-        src="/hero/cone.svg"
-        alt=""
-        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-        style={{ height: 55 * scale, width: 49 * scale }}
-      />
+      {cone && (
+        <Asset
+          src={isMuted ? "/hero/cone-grey.svg" : "/hero/cone.svg"}
+          alt=""
+          className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
+          style={{ height: 55 * scale, width: 49 * scale }}
+        />
+      )}
     </div>
   );
 }
