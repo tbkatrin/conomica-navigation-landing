@@ -75,7 +75,7 @@ export default function Footer() {
           </div>
 
           {/* contacts */}
-          <div className="flex min-w-0 flex-1 flex-col items-start gap-[32px]">
+          <div className="flex min-w-0 flex-1 flex-col items-start gap-[32px] pl-[24px]">
             <p className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#F5F5F5] ${fontVelaGxBold}`}>
               Контакты группы
             </p>
@@ -96,7 +96,7 @@ export default function Footer() {
                 src="/footer/qr-conomica.png"
                 alt="QR-код Conomica"
                 className="shrink-0"
-                style={{ width: 154, height: 154 }}
+                style={{ width: 138, height: 138 }}
                 fit="cover"
               />
               <div className={`flex w-full flex-col items-start gap-[8px] leading-none ${fontVelaMedium}`}>
