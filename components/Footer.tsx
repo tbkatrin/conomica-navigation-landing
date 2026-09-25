@@ -40,7 +40,7 @@ export default function Footer() {
   return (
     <footer className="relative w-full bg-[#191919]">
       <div className="mx-auto flex w-full max-w-[1440px] flex-col items-start gap-[40px] px-[100px] py-[72px]">
-        <div className="flex w-full items-start justify-between gap-[40px]">
+        <div className="flex w-full items-start justify-between gap-[64px]">
           {/* companies */}
           <div className="flex flex-col items-start gap-[32px]">
             <p className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#F5F5F5] ${fontVelaGxBold}`}>
@@ -75,7 +75,7 @@ export default function Footer() {
           </div>
 
           {/* contacts */}
-          <div className="flex min-w-0 flex-1 flex-col items-start gap-[32px] pl-[24px]">
+          <div className="flex flex-col items-start gap-[32px]">
             <p className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#F5F5F5] ${fontVelaGxBold}`}>
               Контакты группы
             </p>
