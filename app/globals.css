@@ -4,11 +4,14 @@
   --background: #ffffff;
   --foreground: #161616;
 
-  /* Brand typeface (Figma: "Vela Sans" / "Vela Sans GX"). Add the real font
-     files via @font-face or next/font/local and these variables pick them
-     up automatically — until then, both fall back to system sans-serif. */
-  --font-vela-sans: "Vela Sans", ui-sans-serif, system-ui, -apple-system,
-    sans-serif;
+  /* Brand typeface (Figma: "Vela Sans" / "Vela Sans GX").
+     --font-vela-sans-file is set by next/font/local in layout.tsx, from the
+     one real weight we have (Regular) — font-medium/font-bold classes on
+     top of it fake-embolden rather than load a real matching weight.
+     "Vela Sans GX" (the heading family) still has no font file and falls
+     back to system sans-serif until one is added. */
+  --font-vela-sans: var(--font-vela-sans-file), ui-sans-serif, system-ui,
+    -apple-system, sans-serif;
   --font-vela-sans-gx: "Vela Sans GX", ui-sans-serif, system-ui,
     -apple-system, sans-serif;
 }

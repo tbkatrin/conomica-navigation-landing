@@ -1,6 +1,5 @@
-import type { ReactNode } from "react";
 import Asset from "./Asset";
-import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium, fontVelaRegular } from "./fonts";
+import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
 
 /**
  * Redesigned hero — per Figma node 218:2027 ("Главная 1440" / frame
@@ -10,25 +9,12 @@ import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium, fontVelaRegular } 
  * horizontally to match the new design (nested wrapper: outer div carries
  * position + the `hero-wave` sway animation, inner div carries the static
  * flip so the two transforms don't fight over the same CSS property).
+ *
+ * The fixed nav bar itself lives in SiteHeader.tsx (rendered once at the
+ * page root, not here) — per Figma node 311:2514, the Hero page shows its
+ * own big logo mark as ordinary page content instead of the small logo
+ * that SiteHeader switches to once you scroll past this section.
  */
-
-function NavLink({ children, href }: { children: ReactNode; href?: string }) {
-  const className = `shrink-0 whitespace-nowrap border-b border-[#161616] pb-[2px] text-[14px] leading-[1.4] tracking-[0.14px] text-[#161616] transition-colors hover:border-[#0EAD66] hover:text-[#0EAD66] ${fontVelaRegular}`;
-
-  if (href) {
-    return (
-      <a href={href} className={className}>
-        {children}
-      </a>
-    );
-  }
-
-  return (
-    <button type="button" className={className}>
-      {children}
-    </button>
-  );
-}
 
 function ProductCard({ name, sub }: { name: string; sub: string }) {
   return (
@@ -48,7 +34,7 @@ function ProductCard({ name, sub }: { name: string; sub: string }) {
 
 export default function Hero() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#F5F5F5]">
+    <section id="hero" className="relative w-full overflow-hidden bg-[#F5F5F5]">
       {/* Animated wave background — full-bleed (spans the real viewport,
           not capped to the 1440px content column). Height uses `aspect-`
           instead of a fixed px value so the box's own aspect ratio always
@@ -70,35 +56,22 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* Header — fixed to the viewport so it stays put while the page scrolls,
-          instead of scrolling away with the rest of the Hero content. */}
-      <header className="fixed left-0 top-0 z-50 w-full">
-        <div className="mx-auto flex w-full max-w-[1440px] items-center justify-between px-[34px] py-[18px]">
-          <div className="flex items-center gap-[24px]">
-            <Asset src="/hero/cone.svg" alt="" className="h-[67px] w-[59px]" />
-            <div className="flex flex-col items-start gap-[4px]">
-              <Asset
-                src="/hero/conomica-wordmark.svg"
-                alt="Conomica"
-                className="h-[56px] w-[327px]"
-              />
-              <p
-                className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#161616] ${fontVelaGxBold}`}
-              >
-                группа компаний
-              </p>
-            </div>
-          </div>
-          <nav className="flex items-center gap-[32px] rounded-[16px] bg-white/[0.24] px-[32px] py-[24px] backdrop-blur-[1.5px] drop-shadow-[8px_6px_16px_rgba(0,0,0,0.14)]">
-            <NavLink href="https://conomica.ru/creditors/">Бизнесу</NavLink>
-            <NavLink href="https://conomica.ru/investors">Инвесторам</NavLink>
-            <NavLink>О нас</NavLink>
-            <NavLink>Стать партнером</NavLink>
-          </nav>
-        </div>
-      </header>
-
       <div className="relative mx-auto w-full max-w-[1440px]" style={{ minHeight: 756 }}>
+        {/* Big logo mark — ordinary page content, not part of the fixed
+            header (see SiteHeader.tsx); scrolls away with the rest of Hero.
+            z-[60] keeps it above the header's z-50 so the header's own
+            backdrop-blur (still applied even while its fill is transparent)
+            doesn't blur the logo underneath it. */}
+        <div className="absolute left-[34px] top-[45px] z-[60] flex items-center gap-[24px]">
+          <Asset src="/hero/cone.svg" alt="" className="h-[67px] w-[59px]" />
+          <div className="flex flex-col items-start gap-[4px]">
+            <Asset src="/hero/conomica-wordmark.svg" alt="Conomica" className="h-[56px] w-[327px]" />
+            <p className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#161616] ${fontVelaGxBold}`}>
+              группа компаний
+            </p>
+          </div>
+        </div>
+
         {/* Headline */}
         <h1
           className={`absolute right-[32px] top-[493px] w-[653px] text-right leading-[0.95] tracking-[-1.56px] text-[#191919] ${fontVelaGxExtraBold}`}

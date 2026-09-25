@@ -168,8 +168,9 @@ export function CircularCarousel({
           card width and fan radius both derive from its measured width */}
       <div ref={trackRef} className="relative h-[460px] w-full">
         {/* Center content — bottom-anchored to the track's own box (not the
-            outer container) so the existing gap-8 between track and
-            controls gives an exact 32px gap to the controls row below */}
+            outer container); combined with the controls row's own
+            translateY below, this gives an exact 40px gap to the controls
+            row below */}
         <motion.div
           initial={{ opacity: 0, y: -24 }}
           animate={{ opacity: 1, y: -32 }}
@@ -252,7 +253,7 @@ export function CircularCarousel({
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-4" style={{ transform: "translateY(-32px)" }}>
+      <div className="flex items-center gap-4" style={{ transform: "translateY(-24px)" }}>
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}

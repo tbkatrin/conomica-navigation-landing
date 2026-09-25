@@ -97,11 +97,11 @@ function SolutionCard({
 export default function Offer() {
   return (
     <section className="relative z-10 mx-auto flex w-full max-w-[1440px] flex-col items-center gap-[64px] overflow-x-hidden bg-white px-[32px]">
-      <div className="flex w-full flex-col items-start gap-[32px]">
+      <div className="flex w-full flex-col items-start gap-[64px]">
         <div className="flex w-full items-start gap-[24px]">
           <div className="flex flex-1 items-start">
             <p
-              className={`[text-box-edge:cap_alphabetic] [text-box-trim:trim-both] text-[14px] uppercase leading-[1.24] tracking-[0.28px] text-[#212226] ${fontVelaMedium}`}
+              className={`text-[14px] uppercase leading-[1.24] tracking-[0.28px] text-[#212226] ${fontVelaMedium}`}
             >
               Что мы можем предложить бизнесу, у которого есть дебиторка?
             </p>
