@@ -23,25 +23,6 @@
   --font-mono: var(--font-geist-mono);
 }
 
-/* Loader (components/Loader.tsx) — morph-to-logo intro animation */
-.loader-morph.settle {
-  transition: transform 0.85s cubic-bezier(0.32, 0.94, 0.3, 1);
-}
-.loader-morph.gone {
-  opacity: 0;
-  transition: opacity 0.22s ease;
-}
-.loader-status.hide {
-  opacity: 0;
-  transition: opacity 0.3s ease;
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .loader-morph {
-    display: none;
-  }
-}
-
 /* Hero wave background (components/Hero.tsx) — slow organic sway, like a
    stem moving in a breeze. transform-origin sits left-of-center since the
    ribbon reads as anchored off the left edge of the viewport. */

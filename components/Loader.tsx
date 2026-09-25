@@ -1,231 +1,390 @@
-"use client";
-
-import { useEffect, useRef, useState } from "react";
-import { interpolate } from "flubber";
-
 /**
- * Page-intro loader: a square<->circle path oscillates while the page
- * settles, then morphs into the conomica mark and hands off to the real
- * wordmark via an animated clip-path wipe. Ported from loadertologo.html —
- * the morph geometry (SQUARE/CIRCLE/MARK, the -150/-32 offsets, WORD_W) is
- * tuned specifically for the logo SVG embedded below, so it's kept intact
- * rather than swapped for the header's separate cone.svg/wordmark.svg.
+ * LOADER — интро навигационного лендинга Conomica.
+ * Порт анимации Figma "Navigation landing V1" / `Group 347`
+ * (fileKey JI3xuwFG1gkfqdqiRLTYB0), кадры Default … Variant21.
+ *
+ * Последовательность (по вариантам макета):
+ *   build     — кольцо рисуется 6 дугами, у каждой дуги — точка и подпись,
+ *               в центре проступает лого группы компаний  (Default … Group 352)
+ *   hold      — полное собранное состояние
+ *   strip     — подписи и лого гаснут → чистое кольцо + 6 точек  (Variant19)
+ *   spiral    — 6 дуг раскручиваются в вертушку, точки стягиваются
+ *               к центру  (Variant20)
+ *   collapse  — вертушка и точки схлопываются в одну белую точку  (Variant21)
+ *   handoff   — Smart-Animate переход screen 0 → screen 1: фон
+ *               `#0A4028` → `#E2E6EF`, точка `#F2FAF2` → `#0A4028`
+ *   done      — оверлей снимается, открывая витрину (screen 2)
+ *
+ * «Экран с точкой» не существует отдельно — это один непрерывный оверлей,
+ * который проигрывает всю анимацию и оба перехода.
+ *
+ * Autoplay один раз. При `prefers-reduced-motion` — оверлея нет вовсе.
+ * Реализация — Framer Motion. Сцена орбиты — 1102 × 620, desktop-only, `cqw`.
  */
 
-const SQUARE = "M15 17 H44 V46 H15 Z";
-const CIRCLE =
-  "M29.5 17 C37.5 17 44 23.5 44 31.5 C44 39.5 37.5 46 29.5 46 C21.5 46 15 39.5 15 31.5 C15 23.5 21.5 17 29.5 17 Z";
-const MARK =
-  "M41.2376 13.6373C40.5601 13.6373 39.8934 13.6696 39.2158 13.7126C38.5276 13.7556 37.8393 13.8094 37.1618 13.8739C34.5055 14.1428 31.9245 14.6482 29.4188 15.358C26.9131 14.6482 24.332 14.1428 21.6758 13.8739C20.9875 13.7986 20.31 13.7449 19.6217 13.7126C18.955 13.6696 18.2774 13.6481 17.5999 13.6373C18.7614 11.9704 20.1272 10.4541 21.665 9.12056C22.6436 8.27098 23.676 7.49667 24.7837 6.81916C25.2569 6.5288 25.7408 6.24919 26.2248 5.99109C26.4829 5.85128 26.7517 5.71148 27.0206 5.58243C27.06 5.5645 27.0995 5.54538 27.1389 5.52626C27.2178 5.48803 27.2966 5.44979 27.3755 5.42111C27.8594 5.18452 28.3541 4.98019 28.8596 4.78662C28.9651 4.74316 29.0742 4.70329 29.1848 4.66287C29.2659 4.63326 29.3477 4.60336 29.4295 4.57153C29.5805 4.62185 29.7249 4.6787 29.8729 4.73699C29.9148 4.75346 29.9569 4.77004 29.9995 4.78662C30.505 4.98019 30.9996 5.19528 31.4836 5.42111L31.8385 5.58243C32.1073 5.71148 32.3762 5.85128 32.6343 5.99109C33.129 6.24919 33.6129 6.5288 34.0753 6.81916C35.1723 7.50743 36.2154 8.27098 37.1941 9.12056C38.7319 10.4541 40.0869 11.9597 41.2591 13.6373H41.2376ZM23.4932 17.5088C21.5145 18.3799 19.611 19.3908 17.7935 20.5415C17.0407 21.0039 16.2987 21.4986 15.5781 22.0041C14.8791 22.4988 14.2016 23.015 13.5348 23.5419C13.2015 23.8 12.8788 24.0689 12.5562 24.3485C11.9325 24.8755 11.3087 25.4239 10.7172 25.9939C10.3193 26.3595 9.93218 26.7359 9.55579 27.1231C9.36221 27.3167 9.16863 27.5102 8.98581 27.7146V27.607V27.2629C9.02883 23.8108 9.67408 20.5093 10.8355 17.4551C11.4593 17.3583 12.1045 17.283 12.739 17.2185C13.3735 17.1539 14.008 17.1002 14.6533 17.0679C14.9551 17.0471 15.267 17.0363 15.5695 17.0259H15.5695L15.5996 17.0249L15.6303 17.0242C16.0713 17.0137 16.5025 17.0034 16.9439 17.0034H17.4816C18.1161 17.0034 18.7506 17.0356 19.3744 17.0679C20.7617 17.1432 22.1274 17.2937 23.4717 17.4981L23.4932 17.5088ZM49.841 27.7038V27.5963L49.8195 27.607V27.2629C49.7872 23.8215 49.1312 20.5092 47.9698 17.4551C47.3353 17.3583 46.7008 17.283 46.0663 17.2185C45.4318 17.1432 44.7973 17.1002 44.152 17.0679C43.8402 17.0464 43.5175 17.0249 43.2057 17.0249C42.7648 17.0034 42.3131 17.0034 41.8614 17.0034H41.8614H41.3237H41.3236C40.6891 17.0141 40.0547 17.0249 39.4309 17.0679C38.0544 17.1432 36.6779 17.283 35.3336 17.4981C37.3124 18.3799 39.2159 19.3908 41.0333 20.5308C41.7861 20.9932 42.5281 21.4879 43.2487 21.9933C43.9477 22.488 44.6252 23.0042 45.292 23.5312C45.6252 23.7999 45.9476 24.0686 46.2701 24.3373L46.2706 24.3377C46.8943 24.8647 47.5073 25.4132 48.1096 25.9831C48.5075 26.3488 48.8946 26.7252 49.271 27.1123L49.3002 27.1431L49.3007 27.1436C49.4833 27.3365 49.6573 27.5201 49.841 27.7038ZM43.3562 26.3165C42.9798 26.295 42.5927 26.2842 42.2163 26.2842H41.8829C37.4737 26.2842 33.2688 27.1553 29.4188 28.7362C25.5688 27.1553 21.3639 26.2842 16.9547 26.2842H16.6213C16.2341 26.2842 15.8577 26.295 15.4813 26.3165C15.8793 25.9939 16.2879 25.6713 16.6966 25.3701C20.4928 22.531 24.7837 20.3157 29.4188 18.8854C34.0538 20.3157 38.3448 22.531 42.141 25.3701C42.5497 25.6713 42.9583 25.9939 43.3562 26.3165ZM18.3957 36.1674C20.4068 34.1026 22.6974 32.3066 25.2031 30.8333L25.1816 30.8226C22.5684 30.059 19.7938 29.6504 16.9332 29.6504H16.6536C16.0836 29.6611 15.5244 29.6719 14.9651 29.7149C14.4059 29.7579 13.8467 29.8117 13.2875 29.8762C13.0079 29.9085 12.7283 29.9515 12.4487 29.9945C12.04 30.059 11.6313 30.1343 11.2334 30.2096L10.7818 30.3064C10.2225 30.4247 9.67408 30.5645 9.12562 30.715L8.98066 30.7554C8.75723 30.8175 8.52914 30.8809 8.3083 30.9516C7.75984 31.1237 7.21137 31.3065 6.68442 31.5001C6.22199 31.6721 5.75956 31.855 5.30788 32.0485C5.22185 32.0808 5.14657 32.1131 5.07129 32.1561C5.07129 32.2206 5.08204 32.2851 5.0928 32.3389C5.20034 33.1132 5.34014 33.8768 5.51221 34.6295C5.67352 35.3823 5.8671 36.1351 6.08218 36.8772C6.99629 39.9744 8.35132 42.8888 10.0827 45.5343C10.4484 46.1043 10.8355 46.642 11.2334 47.1797L11.2335 47.1796C11.341 46.9108 11.4485 46.642 11.5668 46.3731C11.7066 46.0505 11.8572 45.7171 12.0077 45.3945C12.2766 44.803 12.567 44.2223 12.8788 43.6523C12.9594 43.5126 13.0373 43.373 13.1152 43.2333L13.1152 43.2332L13.1154 43.2329C13.1934 43.0931 13.2714 42.9533 13.352 42.8135C13.6639 42.265 13.9973 41.7381 14.3414 41.2111C14.6748 40.6734 15.0404 40.168 15.4168 39.6625C15.5996 39.4044 15.7825 39.1678 15.976 38.9205C16.3524 38.4365 16.7503 37.9633 17.1483 37.5117C17.5462 37.0492 17.9656 36.5976 18.3957 36.1674ZM53.7448 32.1453C53.7448 32.1991 53.734 32.2636 53.7233 32.3281C53.6157 33.1025 53.4759 33.866 53.3038 34.6188C53.1425 35.3823 52.949 36.1244 52.7339 36.8664C51.8198 39.9636 50.4647 42.878 48.7333 45.5235C48.3677 46.0828 47.9913 46.6312 47.5826 47.1689C47.4751 46.9001 47.3675 46.6312 47.2492 46.3624C47.1094 46.029 46.9589 45.7064 46.8083 45.3837C46.5395 44.7923 46.2383 44.2115 45.9372 43.6416C45.7867 43.3512 45.6254 43.0716 45.464 42.8027C45.1522 42.2543 44.8188 41.7273 44.4747 41.2004C44.1413 40.6734 43.7756 40.1572 43.3992 39.6518C43.2164 39.3937 43.0336 39.1571 42.84 38.9097C42.4636 38.4258 42.0765 37.9526 41.6678 37.5009C41.2699 37.0385 40.8505 36.5976 40.4203 36.1566C38.4093 34.0918 36.1187 32.2959 33.6129 30.8226C36.2262 30.059 39.0008 29.6504 41.8614 29.6504H42.141C42.711 29.6504 43.2702 29.6719 43.8294 29.7149C44.3994 29.7471 44.9586 29.8009 45.5071 29.8762C45.7867 29.9085 46.0663 29.9515 46.3459 29.9945C46.7545 30.0483 47.1632 30.1235 47.5611 30.2096C47.5918 30.2162 47.6225 30.2223 47.6532 30.2282C47.6727 30.232 47.6922 30.2357 47.7116 30.2394C47.812 30.2586 47.9124 30.2777 48.0128 30.3064C48.572 30.4247 49.1205 30.5645 49.6689 30.715C49.9485 30.7903 50.2174 30.8656 50.4863 30.9516C51.0347 31.1129 51.5832 31.3065 52.1101 31.5001C52.5726 31.6721 53.035 31.855 53.4867 32.0485C53.5037 32.0558 53.5212 32.0631 53.5391 32.0705L53.5393 32.0706C53.6004 32.096 53.6651 32.1228 53.7233 32.1561L53.7448 32.1453ZM44.0445 51.2125C44.3994 50.8791 44.7328 50.535 45.0661 50.1801C44.9693 49.8682 44.8726 49.5563 44.7543 49.2445C44.6575 48.9648 44.5499 48.6852 44.4424 48.4056C44.3456 48.1583 44.2488 47.9109 44.1413 47.6743C44.0911 47.5632 44.0421 47.4521 43.9931 47.341C43.8951 47.1187 43.7971 46.8965 43.6896 46.6742C43.6333 46.5617 43.5788 46.4491 43.5246 46.3373C43.4442 46.1713 43.3645 46.0068 43.2809 45.8461C43.0121 45.3084 42.7217 44.7815 42.4098 44.2653C42.1195 43.7383 41.7861 43.2329 41.4528 42.7275L41.4527 42.7274C41.2914 42.4801 41.1193 42.2327 40.9473 41.9961C40.6031 41.5229 40.259 41.0605 39.8826 40.6088C39.517 40.1572 39.1298 39.7055 38.7319 39.2753C36.1186 36.4255 32.9569 34.0918 29.4188 32.4357C25.8699 34.081 22.7189 36.4255 20.1057 39.2753C19.7077 39.7055 19.3206 40.1572 18.955 40.6088C18.5893 41.0605 18.2344 41.5229 17.8903 41.9961C17.7182 42.2327 17.5462 42.4801 17.3848 42.7274C17.0515 43.2329 16.7288 43.7383 16.4277 44.2653C16.1158 44.7815 15.8255 45.3084 15.5566 45.8461C15.4168 46.115 15.277 46.3946 15.148 46.6742C14.9867 47.0076 14.8361 47.341 14.6963 47.6743C14.5888 47.9109 14.492 48.1583 14.3952 48.4056C14.2876 48.6745 14.1801 48.9648 14.0833 49.2445C13.9758 49.5563 13.8682 49.8682 13.7714 50.1801C14.1048 50.535 14.4382 50.8791 14.7931 51.2125C15.2017 51.6104 15.6319 52.0083 16.0621 52.3847C16.9117 53.1267 17.8043 53.8257 18.7291 54.471C19.6432 55.1162 20.5896 55.7185 21.5682 56.2669C22.0522 56.5466 22.5469 56.8047 23.0523 57.052C24.0524 57.5467 25.0956 57.9984 26.1495 58.3963C27.2142 58.7942 28.3003 59.1383 29.4188 59.4287C30.5265 59.1383 31.6234 58.7942 32.6881 58.3963C33.742 58.0091 34.7851 57.5574 35.7853 57.052C36.2907 56.8047 36.7854 56.5466 37.2693 56.2669C38.248 55.7185 39.1943 55.1162 40.1084 54.471C41.0333 53.8257 41.9259 53.1267 42.7755 52.3847C43.2057 52.0083 43.6358 51.6104 44.0445 51.2125Z";
-const WORD =
-  "M257.999 11.7661C257.999 9.37865 256.074 7.8623 254.149 7.8623C251.87 7.8623 249.945 9.37865 249.945 11.7661C249.945 14.4546 251.87 15.971 254.149 15.971C256.074 15.971 257.999 14.4546 257.999 11.7661ZM257.365 21.219H250.654V47.47H257.365V21.219ZM316.083 21.0254H309.512V23.9183C308.34 22.7354 307.06 21.8428 305.684 21.2513C304.307 20.6598 302.834 20.3587 301.264 20.3587C297.854 20.3587 294.951 21.6492 292.563 24.2302C290.176 26.8112 288.982 30.2633 288.982 34.1671C288.982 38.0708 290.208 41.3294 292.682 43.9534C295.144 46.5774 298.07 47.8894 301.457 47.8894C302.963 47.8894 304.361 47.6206 305.651 47.0828C306.942 46.5451 308.232 45.6633 309.512 44.4481V47.2119H316.083V21.0254ZM297.532 28.5641C298.876 27.1338 300.565 26.4133 302.597 26.4133C304.683 26.4133 306.404 27.1231 307.759 28.5319C309.125 29.9514 309.802 31.7474 309.802 34.0703C309.802 36.3932 309.114 38.2752 307.759 39.7162C306.404 41.1465 304.63 41.8671 302.629 41.8671C300.629 41.8671 298.941 41.1358 297.575 39.6732C296.209 38.2214 295.521 36.3394 295.521 34.0918C295.521 31.8442 296.188 30.0052 297.532 28.5641ZM276.712 48.1153C280.97 48.1153 284.939 46.5452 287.154 43.5663L287.143 43.577L283.992 38.6731C282.304 40.5336 280.089 41.8778 277.228 41.8778C273.26 41.8778 269.646 38.9527 269.646 34.3499C269.646 29.7471 273.206 26.8865 276.938 26.8865C279.336 26.8865 281.497 27.5317 283.476 29.4568L286.627 24.1442C284.175 21.6922 280.39 20.5845 276.066 20.5845C268.076 20.5845 262.473 26.7037 262.473 34.3499C262.473 42.6306 268.194 48.1153 276.712 48.1153ZM105.193 43.5663C102.978 46.5452 99.0094 48.1153 94.7508 48.1153C86.2334 48.1153 80.5122 42.6306 80.5122 34.3499C80.5122 26.7037 86.1151 20.5845 94.1055 20.5845C98.4287 20.5845 102.214 21.6922 104.666 24.1442L101.515 29.4568C99.5364 27.5317 97.3748 26.8865 94.9766 26.8865C91.2449 26.8865 87.6853 29.7471 87.6853 34.3499C87.6853 38.9527 91.2987 41.8778 95.267 41.8778C98.1276 41.8778 100.343 40.5336 102.031 38.6731L105.182 43.577L105.193 43.5663ZM135.52 34.3499C135.52 26.4778 129.917 20.5845 121.228 20.5845C112.538 20.5845 106.935 26.4778 106.935 34.3499C106.935 42.222 112.538 48.1153 121.228 48.1153C129.917 48.1153 135.52 42.222 135.52 34.3499ZM128.401 34.3499C128.401 38.8989 125.368 41.8778 121.228 41.8778C117.141 41.8778 114.108 38.8989 114.108 34.3499C114.108 29.8009 117.152 26.8865 121.228 26.8865C125.303 26.8865 128.401 29.8009 128.401 34.3499ZM140.101 21.219H146.812V23.843C148.382 22.1546 151.189 20.7458 154.34 20.7458C160.76 20.7458 165.137 23.843 165.137 32.0592V47.4592H158.426V33.2207C158.426 29.0158 156.265 27.037 152.533 27.037C150.253 27.037 148.393 27.9726 146.812 29.5427V47.4592H140.101V21.219ZM198.324 34.3499C198.324 26.4778 192.721 20.5845 184.032 20.5845C175.343 20.5845 169.74 26.4778 169.74 34.3499C169.74 42.222 175.343 48.1153 184.032 48.1153C192.721 48.1153 198.324 42.222 198.324 34.3499ZM191.205 34.3499C191.205 38.8989 188.172 41.8778 184.032 41.8778C179.945 41.8778 176.913 38.8989 176.913 34.3499C176.913 29.8009 179.956 26.8865 184.032 26.8865C188.108 26.8865 191.205 29.8009 191.205 34.3499ZM243.417 47.4807H236.706V32.0807C236.706 28.8115 235.362 27.0585 232.211 27.0585C229.705 27.0585 227.716 28.2845 226.78 30.0912C226.78 30.2771 226.791 30.5722 226.803 30.8932L226.803 30.8958C226.818 31.2796 226.834 31.7004 226.834 32.0162V47.4807H220.123V31.6076C220.123 28.8652 218.607 27.0585 215.746 27.0585C213.359 27.0585 211.434 28.1124 210.262 29.8546V47.47H203.551V21.219H210.262V24.1334C212.133 22.0363 215.219 20.7458 218.489 20.7458C222.511 20.7458 225.199 22.5525 226.135 24.9507C228.006 22.4987 230.92 20.7458 235.007 20.7458C239.793 20.7458 243.406 23.1332 243.406 30.317V47.47L243.417 47.4807Z";
-const WORD_W = 246;
+"use client";
 
-const easeOutCubic = (t: number) => 1 - Math.pow(1 - t, 3);
-const easeInOutSine = (t: number) => -(Math.cos(Math.PI * t) - 1) / 2;
+import { useEffect, useState } from "react";
+import {
+  AnimatePresence,
+  motion,
+  useReducedMotion,
+  type Transition,
+} from "framer-motion";
 
-function raf(
-  dur: number,
-  ease: (t: number) => number,
-  onFrame: (p: number) => void,
-) {
-  return new Promise<void>((resolve) => {
-    let done = false;
-    const t0 = performance.now();
-    const finish = () => {
-      if (done) return;
-      done = true;
-      try {
-        onFrame(1);
-      } catch {
-        // element may already be gone if the loader was interrupted
-      }
-      resolve();
-    };
-    const step = (now: number) => {
-      if (done) return;
-      const p = Math.min(1, (now - t0) / dur);
-      onFrame(ease(p));
-      if (p < 1) requestAnimationFrame(step);
-      else finish();
-    };
-    requestAnimationFrame(step);
-    setTimeout(finish, dur + 500); // rAF pauses on a hidden tab — never hang
-  });
+import {
+  ORBIT,
+  RING_CENTER,
+  RING_DIAMETER_CQW,
+  STAGE_H,
+  STAGE_W,
+} from "./loader.data";
+
+/* ── цвета из макета ── */
+const GREEN = "#0A4028"; // фон screen 0 / точка screen 1
+const LAVENDER = "#EEF2EC"; // фон screen 1 = верх градиента героя (бесшовный переход)
+const WHITE_DOT = "#F2FAF2"; // точка screen 0
+
+/* ── геометрия ── */
+const RING_RADIUS_CQW = RING_DIAMETER_CQW / 2; // радиус орбиты, cqw
+const DOT_HALF_CQW = 0.862; // половина точки (19/1102), cqw
+const ARC_COUNT = 6;
+/** порядок появления «спиц» при сборке — снизу против часовой (как в макете) */
+const SPOKE_ORDER = [3, 4, 5, 0, 1, 2];
+
+type Phase =
+  "build" | "hold" | "strip" | "spiral" | "collapse" | "handoff" | "done";
+
+/* ── тайминги фаз, мс ── */
+const SEQUENCE: Array<[Phase, number]> = [
+  ["build", 2200], // сборка кольца (дуга + точка + подпись по кругу) + лого
+  ["hold", 450], // собранное состояние
+  ["strip", 480], // подписи/лого гаснут → кольцо + точки (Variant19)
+  ["spiral", 700], // раскрутка в вертушку, точки к центру (Variant20)
+  ["collapse", 460], // схлопывание в белую точку (Variant21)
+  ["handoff", 900], // screen 0 → screen 1 (перекрас точки и фона)
+];
+
+const ARC_R = 50; // радиус дуги в viewBox 100×100 (= радиус орбиты точек)
+
+const r3 = (n: number) => Math.round(n * 1000) / 1000; // стабильно для SSR/CSR
+const toRad = (d: number) => (d * Math.PI) / 180;
+
+/** угловой размер дуги i (от точки i до точки i+1), град */
+function arcSpan(i: number): number {
+  const start = ORBIT[i].angle;
+  const end =
+    i === ARC_COUNT - 1 ? ORBIT[0].angle + 360 : ORBIT[i + 1].angle;
+  return end - start;
 }
 
-const wait = (ms: number) => new Promise<void>((r) => setTimeout(r, ms));
+/** длина дуги i в единицах viewBox — своя у каждой (точки расставлены неравномерно) */
+const arcLen = (i: number) => (2 * Math.PI * ARC_R * arcSpan(i)) / 360;
+
+/** дуга i как path: ровно от точки i до точки i+1 (по часовой) */
+function arcPath(i: number): string {
+  const a0 = toRad(ORBIT[i].angle - 90);
+  const a1 = toRad(ORBIT[i].angle - 90 + arcSpan(i));
+  const x0 = r3(50 + ARC_R * Math.cos(a0));
+  const y0 = r3(50 + ARC_R * Math.sin(a0));
+  const x1 = r3(50 + ARC_R * Math.cos(a1));
+  const y1 = r3(50 + ARC_R * Math.sin(a1));
+  const large = arcSpan(i) > 180 ? 1 : 0;
+  return `M ${x0} ${y0} A ${ARC_R} ${ARC_R} 0 ${large} 1 ${x1} ${y1}`;
+}
+
+/** задержка появления спицы i при сборке, сек */
+const spokeDelay = (i: number) => 0.2 + SPOKE_ORDER.indexOf(i) * 0.26;
 
 export default function Loader() {
-  const [hidden, setHidden] = useState(false);
-  const [fading, setFading] = useState(false);
-  const morphRef = useRef<SVGSVGElement>(null);
-  const mpRef = useRef<SVGPathElement>(null);
-  const logoBoxRef = useRef<HTMLDivElement>(null);
-  const wcrRef = useRef<SVGRectElement>(null);
-  const statusRef = useRef<HTMLParagraphElement>(null);
+  const reduce = useReducedMotion();
+  const [phase, setPhase] = useState<Phase>("build");
 
+  // мгновенный пропуск интро для превью/отладки: `?intro=off`
+  const [skip, setSkip] = useState(false);
   useEffect(() => {
-    const morph = morphRef.current!;
-    const mp = mpRef.current!;
-    const logoBox = logoBoxRef.current!;
-    const wcr = wcrRef.current!;
-    const status = statusRef.current!;
-
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-
-    const previousOverflow = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
-
-    const reveal = () => {
-      document.body.style.overflow = previousOverflow;
-      setFading(true);
-      setTimeout(() => setHidden(true), 400);
-    };
-
-    if (reduced) {
-      logoBox.style.opacity = "1";
-      wcr.setAttribute("width", String(WORD_W));
-      morph.style.display = "none";
-      status.style.display = "none";
-      const t = setTimeout(reveal, 400);
-      return () => clearTimeout(t);
+    if (new URLSearchParams(window.location.search).get("intro") === "off") {
+      setSkip(true);
     }
-
-    let cancelled = false;
-    let oscRAF = 0;
-
-    function liftToCentre() {
-      const field = morph.parentElement!.getBoundingClientRect();
-      const m = morph.getBoundingClientRect();
-      const dx = field.left + field.width / 2 - (m.left + m.width / 2);
-      const dy = field.top + field.height / 2 - (m.top + m.height / 2);
-      const scale = Math.min((field.height * 0.7) / m.height, 3);
-      morph.style.transform = `translate(${dx}px,${dy}px) scale(${scale})`;
-    }
-
-    const loadOsc = interpolate(SQUARE, CIRCLE, { maxSegmentLength: 2 });
-
-    function startOsc() {
-      const t0 = performance.now();
-      const loop = (now: number) => {
-        const phase = ((now - t0) / 1000) % 2;
-        const tri = phase < 1 ? phase : 2 - phase;
-        mp.setAttribute("d", loadOsc(easeInOutSine(tri)));
-        mp.setAttribute(
-          "transform",
-          `rotate(${((now - t0) / 1400) * 360} 29.5 31.5)`,
-        );
-        oscRAF = requestAnimationFrame(loop);
-      };
-      oscRAF = requestAnimationFrame(loop);
-    }
-
-    async function run() {
-      liftToCentre();
-      startOsc();
-      await wait(2000);
-      if (cancelled) return;
-
-      cancelAnimationFrame(oscRAF);
-      // rAF never fires on a backgrounded tab, so the oscillation may not
-      // have painted a single frame yet — fall back to the starting shape.
-      const frozen = mp.getAttribute("d") || SQUARE;
-      const toMark = interpolate(frozen, MARK, { maxSegmentLength: 2 });
-
-      morph.classList.add("settle");
-      morph.style.transform = "translate(0px,0px) scale(1)";
-      await raf(850, easeOutCubic, (p) => {
-        mp.setAttribute("d", toMark(p));
-        mp.setAttribute("transform", `rotate(${360 * (1 - p)} 29.5 31.5)`);
-      });
-      if (cancelled) return;
-
-      status.classList.add("hide");
-      logoBox.style.transition = "opacity .25s ease";
-      logoBox.style.opacity = "1";
-      await wait(170);
-      if (cancelled) return;
-      morph.classList.add("gone");
-      await raf(560, easeOutCubic, (p) => {
-        wcr.setAttribute("width", String(WORD_W * p));
-      });
-      if (cancelled) return;
-
-      await wait(300);
-      if (cancelled) return;
-      reveal();
-    }
-
-    run();
-
-    return () => {
-      cancelled = true;
-      cancelAnimationFrame(oscRAF);
-      document.body.style.overflow = previousOverflow;
-    };
   }, []);
 
-  if (hidden) return null;
+  // проигрываем последовательность фаз
+  useEffect(() => {
+    if (reduce || skip) {
+      setPhase("done");
+      return;
+    }
+    let idx = 0;
+    let timer: number;
+    const next = () => {
+      if (idx >= SEQUENCE.length) {
+        setPhase("done");
+        return;
+      }
+      const [ph, dur] = SEQUENCE[idx++];
+      setPhase(ph);
+      timer = window.setTimeout(next, dur);
+    };
+    next();
+    return () => window.clearTimeout(timer);
+  }, [reduce, skip]);
+
+  // блокировка скролла на время интро + сигнал «лоадер закончился»
+  useEffect(() => {
+    if (reduce || phase === "done") {
+      document.body.style.overflow = "";
+      document.dispatchEvent(new Event("conomica:loaded"));
+      return;
+    }
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [reduce, phase]);
+
+  const isSpiral = phase === "spiral";
+  const isCollapsePlus =
+    phase === "collapse" || phase === "handoff" || phase === "done";
+  const stripped = phase === "strip" || isSpiral || isCollapsePlus;
+  const handoff = phase === "handoff";
+  const dotVisible = phase === "collapse" || phase === "handoff";
+
+  /* всё кольцо крутится и сжимается: strip → spiral (вертушка) → collapse */
+  const ringSpin = isCollapsePlus
+    ? { rotate: 320, scale: 0 }
+    : isSpiral
+      ? { rotate: 100, scale: 0.62 }
+      : { rotate: 0, scale: 1 };
+  const ringSpinT: Transition = isCollapsePlus
+    ? { duration: 0.5, ease: "easeIn" }
+    : isSpiral
+      ? { duration: 0.75, ease: [0.45, 0, 0.35, 1] }
+      : { duration: 0.4, ease: "easeOut" };
+
+  /* доля скрытой части дуги: 0 — целая, >0 — короткая «лопасть» вертушки */
+  const arcHidden = isSpiral ? 0.4 : isCollapsePlus ? 0.55 : 0;
+
+  /* точки в вертушке подтянуты к центру сильнее дуг */
+  const dotPull = isSpiral || isCollapsePlus ? 0.5 : 1;
+
+  if (skip) return null;
 
   return (
-    <div
-      className={`fixed inset-0 z-[100] flex items-center justify-center bg-white transition-opacity duration-[400ms] ${
-        fading ? "pointer-events-none opacity-0" : "opacity-100"
-      }`}
-      aria-hidden="true"
-    >
-      <div className="relative h-[200px] w-[300px]">
-        <svg
-          ref={morphRef}
-          viewBox="0 0 64 64"
-          className="loader-morph absolute left-1/2 top-1/2 -ml-[150px] -mt-8 h-[59.8px] w-[59.8px] origin-[29.9px_29.9px] will-change-transform"
+    <AnimatePresence>
+      {!reduce && phase !== "done" && (
+        <motion.div
+          key="loader"
+          aria-hidden
+          className="fixed inset-0 flex items-center justify-center overflow-hidden"
+          style={{ zIndex: 100 }}
+          initial={{ backgroundColor: GREEN }}
+          animate={{ backgroundColor: handoff ? LAVENDER : GREEN }}
+          exit={{ opacity: 0 }}
+          transition={{
+            backgroundColor: { duration: 0.5, ease: "easeInOut" },
+            opacity: { duration: 0.4, ease: "easeOut" },
+          }}
         >
-          <path ref={mpRef} d={SQUARE} className="fill-[#00703e]" />
-        </svg>
-
-        <div
-          ref={logoBoxRef}
-          className="absolute left-1/2 top-1/2 -ml-[150px] -mt-8 h-16 w-[300px] origin-center opacity-0"
-        >
-          <svg
-            viewBox="0 0 321 64"
-            role="img"
-            aria-label="conomica"
-            className="block h-16 w-[300px]"
-            style={{ overflow: "visible" }}
+          <div
+            className="relative shrink-0 [container-type:inline-size]"
+            style={{
+              // сцена масштабируется шириной, а всё внутри — в cqw/%;
+              // min() по vw и vh, чтобы сцена влезала и по высоте
+              width: `min(${STAGE_W}px, 94vw, 158vh)`,
+              aspectRatio: `${STAGE_W} / ${STAGE_H}`,
+            }}
           >
-            <defs>
-              <clipPath id="loaderWordClip">
-                <rect ref={wcrRef} x={74} y={-4} width={0} height={72} />
-              </clipPath>
-            </defs>
-            <path
-              d={MARK}
-              fillRule="evenodd"
-              clipRule="evenodd"
-              className="fill-[#00703e]"
-            />
-            <g clipPath="url(#loaderWordClip)">
-              <path
-                d={WORD}
-                fillRule="evenodd"
-                clipRule="evenodd"
-                className="fill-[#161616]"
-              />
-            </g>
-          </svg>
-        </div>
+            <div className="absolute inset-0">
+              {/* ── кольцо (6 дуг + точки) — крутится и сжимается целиком ── */}
+              <div
+                className="absolute -translate-x-1/2 -translate-y-1/2"
+                style={{
+                  left: `${RING_CENTER.x}%`,
+                  top: `${RING_CENTER.y}%`,
+                  width: `${RING_DIAMETER_CQW}cqw`,
+                  height: `${RING_DIAMETER_CQW}cqw`,
+                }}
+              >
+                <motion.div
+                  className="absolute inset-0 origin-center"
+                  initial={{ rotate: 0, scale: 1 }}
+                  animate={ringSpin}
+                  transition={ringSpinT}
+                >
+                  {/* дуги — каждая ровно от точки i до точки i+1 */}
+                  {Array.from({ length: ARC_COUNT }, (_, i) => (
+                    <svg
+                      key={i}
+                      viewBox="0 0 100 100"
+                      fill="none"
+                      className="absolute inset-0 h-full w-full overflow-visible"
+                    >
+                      <motion.path
+                        d={arcPath(i)}
+                        stroke="rgba(255,255,255,0.85)"
+                        strokeWidth={0.45}
+                        strokeLinecap="round"
+                        strokeDasharray={arcLen(i)}
+                        initial={{ opacity: 0, strokeDashoffset: arcLen(i) }}
+                        animate={{
+                          opacity: 1,
+                          strokeDashoffset: arcLen(i) * arcHidden,
+                        }}
+                        transition={{
+                          opacity: {
+                            duration: 0.3,
+                            delay: phase === "build" ? spokeDelay(i) : 0,
+                            ease: "easeOut",
+                          },
+                          strokeDashoffset: {
+                            duration: phase === "build" ? 0.55 : 0.5,
+                            delay: phase === "build" ? spokeDelay(i) : 0,
+                            ease: "easeInOut",
+                          },
+                        }}
+                      />
+                    </svg>
+                  ))}
 
-        <p
-          ref={statusRef}
-          className="loader-status absolute inset-x-0 -bottom-8 text-center font-mono text-xs tracking-wider text-[#5f635f]"
-        >
-          Loading…
-        </p>
-      </div>
-    </div>
+                  {/* точки — дополнительно подтягиваются к центру в вертушке */}
+                  <motion.div
+                    className="absolute inset-0 origin-center"
+                    initial={{ scale: 1 }}
+                    animate={{ scale: dotPull }}
+                    transition={ringSpinT}
+                  >
+                    {ORBIT.map((p, i) => {
+                      // placed by direct trig (angle measured clockwise from
+                      // 12 o'clock) rather than a rotated zero-size wrapper +
+                      // negative margins — that combination let the browser's
+                      // shrink-to-fit width for the auto-sized rotated wrapper
+                      // drift slightly per angle, nudging dots off the ring.
+                      const rad = (p.angle * Math.PI) / 180;
+                      const dx = RING_RADIUS_CQW * Math.sin(rad);
+                      const dy = -RING_RADIUS_CQW * Math.cos(rad);
+                      return (
+                        <div
+                          key={i}
+                          className="absolute"
+                          style={{
+                            left: `calc(50% + ${dx}cqw)`,
+                            top: `calc(50% + ${dy}cqw)`,
+                            width: "1.724cqw",
+                            height: "1.724cqw",
+                            marginLeft: `calc(-${DOT_HALF_CQW}cqw)`,
+                            marginTop: `calc(-${DOT_HALF_CQW}cqw)`,
+                          }}
+                        >
+                          <motion.span
+                            className="block h-full w-full rounded-full bg-[#F2FAF2] drop-shadow-[0_0_10px_rgba(255,255,255,0.85)]"
+                            initial={{ scale: 0 }}
+                            animate={{ scale: 1 }}
+                            transition={{
+                              delay: phase === "build" ? spokeDelay(i) + 0.05 : 0,
+                              duration: 0.4,
+                              ease: [0.34, 1.56, 0.64, 1],
+                            }}
+                          />
+                        </div>
+                      );
+                    })}
+                  </motion.div>
+                </motion.div>
+              </div>
+
+              {/* ── подписи-ценности ── */}
+              {ORBIT.map((p, i) => (
+                <motion.div
+                  key={i}
+                  className={
+                    "absolute flex items-center " +
+                    (p.nowrap ? "left-1/2 whitespace-nowrap" : "")
+                  }
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: stripped ? 0 : 1, y: 0 }}
+                  transition={{
+                    duration: stripped ? 0.3 : 0.5,
+                    delay:
+                      stripped || phase !== "build" ? 0 : spokeDelay(i) + 0.1,
+                    ease: "easeOut",
+                  }}
+                  style={{
+                    ...(p.nowrap ? { x: "-50%" } : null),
+                    ...(p.nowrap
+                      ? p.labelInset[0]
+                        ? { top: `${p.labelInset[0]}%` }
+                        : { bottom: `${p.labelInset[2]}%` }
+                      : {
+                          top: `${p.labelInset[0]}%`,
+                          bottom: `${p.labelInset[2]}%`,
+                          right: `${p.labelInset[1]}%`,
+                          left: `${p.labelInset[3]}%`,
+                        }),
+                  }}
+                >
+                  <p
+                    className={
+                      "text-center font-medium uppercase leading-[1.24] tracking-[0.02em] text-white " +
+                      (p.nowrap ? "" : "w-full")
+                    }
+                    style={{ fontSize: "1.27cqw" }}
+                  >
+                    {p.label}
+                  </p>
+                </motion.div>
+              ))}
+
+              {/* ── лого группы компаний ── */}
+              <motion.div
+                className="absolute left-1/2 top-1/2 flex items-center"
+                initial={{ opacity: 0, scale: 0.92 }}
+                animate={{
+                  opacity: stripped ? 0 : 1,
+                  scale: stripped ? 0.92 : 1,
+                }}
+                transition={{
+                  duration: stripped ? 0.3 : 0.5,
+                  delay: stripped || phase !== "build" ? 0 : 1.6,
+                  ease: "easeOut",
+                }}
+                style={{ x: "-50%", y: "-50%", gap: "2.18cqw" }}
+              >
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/cone-loader.svg"
+                  alt=""
+                  className="block h-auto shrink-0"
+                  style={{ width: "6.35cqw" }}
+                />
+                {/* eslint-disable-next-line @next/next/no-img-element */}
+                <img
+                  src="/wordmark-loader.svg"
+                  alt="Conomica — группа компаний"
+                  className="block h-auto shrink-0"
+                  style={{ width: "18.24cqw" }}
+                />
+              </motion.div>
+            </div>
+          </div>
+
+          {/* ── общая точка: screen 0 (белая) → screen 1 (зелёная), центр экрана ── */}
+          <motion.span
+            className="absolute left-1/2 top-1/2 size-[19px] rounded-full drop-shadow-[5px_5px_25.55px_#ffffff]"
+            initial={{ opacity: 0, scale: 0.4, backgroundColor: WHITE_DOT }}
+            animate={{
+              opacity: dotVisible ? 1 : 0,
+              scale: dotVisible ? 1 : 0.4,
+              backgroundColor: handoff ? GREEN : WHITE_DOT,
+            }}
+            transition={{
+              opacity: { duration: 0.3, delay: phase === "collapse" ? 0.2 : 0 },
+              scale: { duration: 0.3, delay: phase === "collapse" ? 0.2 : 0 },
+              backgroundColor: { duration: 0.5, ease: "easeInOut" },
+            }}
+            style={{ x: "-50%", y: "-50%" }}
+          />
+        </motion.div>
+      )}
+    </AnimatePresence>
   );
 }
