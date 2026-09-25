@@ -44,10 +44,15 @@ export default function Hero() {
           either direction; a fixed height only avoids cropping at one
           specific width and crops top/bottom everywhere else. Mirrored
           horizontally per the design. Outer div: position. Middle div: the
-          existing sway animation. Inner div: the static horizontal flip. */}
+          existing sway animation. Inner div: the static horizontal flip.
+          The left/width overshoot is also what tucks the ribbon's own
+          pointed tip (at the image's left/right edge, one of which lands at
+          the visible left edge after the flip) behind the section's own
+          overflow-hidden edge — widened slightly (60px → 90px) to fully
+          hide it instead of just mostly. */}
       <div
         className="pointer-events-none absolute top-[12px] aspect-[2341/688] overflow-hidden"
-        style={{ left: -60, width: "calc(100% + 60px)" }}
+        style={{ left: -90, width: "calc(100% + 90px)" }}
       >
         <div className="hero-wave h-full w-full">
           <div className="h-full w-full -scale-x-100">
