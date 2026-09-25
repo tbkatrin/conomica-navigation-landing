@@ -52,6 +52,7 @@ interface Variant {
   headline: ReactNode;
   badge: { icon: string; iconClassName: string; lines: [string, string] };
   mockup: MockupBox;
+  ctaHref?: string;
 }
 
 // Shared slot geometry for the pieces both variants render at the same
@@ -74,6 +75,7 @@ const VARIANTS: [Variant, Variant] = [
       iconClassName: "h-[30px] w-[33px]",
       lines: ["Лицензия", "Центробанка РФ"],
     },
+    ctaHref: "https://conomica-finance.ru/",
     mockup: {
       left: 750,
       top: 157,
@@ -95,6 +97,7 @@ const VARIANTS: [Variant, Variant] = [
       iconClassName: "h-[43px] w-[42.685px]",
       lines: ["Резидент", "Сколково"],
     },
+    ctaHref: "https://cabinet.conomica.space/",
     mockup: {
       left: 731,
       top: 158,
@@ -145,17 +148,21 @@ function HeadlineCenter({ productName }: { productName: string }) {
   );
 }
 
-function TextBlock({ headline }: { headline: ReactNode }) {
+function TextBlock({ headline, ctaHref }: { headline: ReactNode; ctaHref?: string }) {
+  const CtaTag = ctaHref ? "a" : "button";
   return (
     <div className="flex flex-col items-start gap-[10px]" style={{ width: TEXT_BLOCK.width }}>
       <p className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#191919] ${fontVelaGxBold}`}>
         {headline}
       </p>
-      <button className="flex h-[48px] w-[160px] items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]">
+      <CtaTag
+        {...(ctaHref ? { href: ctaHref, target: "_blank", rel: "noopener noreferrer" } : {})}
+        className="flex h-[48px] w-[160px] items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
+      >
         <span className={`text-[16px] leading-[1.2] tracking-[0.16px] text-white ${fontVelaMedium}`}>
           На платформу
         </span>
-      </button>
+      </CtaTag>
     </div>
   );
 }
@@ -252,7 +259,7 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
             anchor={TEXT_BLOCK}
             progress={progress}
             variants={VARIANTS}
-            render={(v) => <TextBlock headline={v.headline} />}
+            render={(v) => <TextBlock headline={v.headline} ctaHref={v.ctaHref} />}
           />
           <Slot
             direction="right"

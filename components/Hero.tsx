@@ -16,18 +16,22 @@ import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
  * that SiteHeader switches to once you scroll past this section.
  */
 
-function ProductCard({ name, sub }: { name: string; sub: string }) {
+function ProductCard({ name, sub, href }: { name: string; sub: string; href?: string }) {
+  const CtaTag = href ? "a" : "button";
   return (
     <div className="flex h-[140px] flex-1 items-center justify-between rounded-[16px] bg-white px-[32px] py-[24px] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]">
       <div className={`text-black ${fontVelaGxBold}`}>
         <p className="text-[38px] leading-[0.98] tracking-[-1.14px]">{name}</p>
         <p className="text-[28px] leading-[0.95] tracking-[-0.84px]">{sub}</p>
       </div>
-      <button className="flex h-[48px] w-[160px] shrink-0 items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]">
+      <CtaTag
+        {...(href ? { href, target: "_blank", rel: "noopener noreferrer" } : {})}
+        className="flex h-[48px] w-[160px] shrink-0 items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
+      >
         <span className={`text-[16px] leading-[1.2] tracking-[0.16px] text-white ${fontVelaMedium}`}>
           На платформу
         </span>
-      </button>
+      </CtaTag>
     </div>
   );
 }
@@ -88,9 +92,9 @@ export default function Hero() {
 
         {/* Product row */}
         <div className="absolute left-[34px] top-[616px] flex w-[calc(100%-68px)] items-center gap-[21px]">
-          <ProductCard name="Conomica" sub="займы" />
-          <ProductCard name="Conomica" sub="цессии" />
-          <ProductCard name="Rescore" sub="online" />
+          <ProductCard name="Conomica" sub="займы" href="https://conomica-finance.ru/" />
+          <ProductCard name="Conomica" sub="цессии" href="https://cabinet.conomica.space/" />
+          <ProductCard name="Rescore" sub="online" href="https://corp.rescore.online/" />
         </div>
       </div>
     </section>

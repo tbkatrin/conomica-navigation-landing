@@ -83,13 +83,18 @@ function SolutionCard({
           <Stat>{stat2}</Stat>
         </div>
       </div>
-      <button className="flex h-[48px] w-full items-center justify-center rounded-[12px] bg-[#00703e] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]">
+      <a
+        href="https://conomica.ru/creditors"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="flex h-[48px] w-full items-center justify-center rounded-[12px] bg-[#00703e] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
+      >
         <span
           className={`text-[16px] leading-[1.2] tracking-[0.16px] text-white ${fontVelaMedium}`}
         >
           Подробнее
         </span>
-      </button>
+      </a>
     </div>
   );
 }
