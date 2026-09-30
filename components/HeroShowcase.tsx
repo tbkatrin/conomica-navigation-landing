@@ -223,7 +223,15 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
 
   return (
     <section ref={wrapRef} className="relative w-full" style={{ height: `${scrollLength}vh` }}>
-      <div className="sticky top-0 flex h-screen w-full items-center justify-center overflow-hidden">
+      <div
+        className="sticky top-0 flex h-screen w-full items-start justify-center overflow-hidden"
+        // Centers the 584px-tall box the same way `items-center` would on
+        // ordinary viewports, but caps the top gap at 120px — on a tall
+        // (e.g. 27"+) monitor, true centering pushes the whole box, and the
+        // moment it first scrolls into view, well below the fold, leaving a
+        // big blank gap under the product cards until you scroll further.
+        style={{ paddingTop: "clamp(0px, calc((100vh - 584px) / 2), 120px)" }}
+      >
         <div className="relative mx-auto h-[584px] w-[1330px] max-w-full overflow-hidden rounded-[8px] bg-white">
           <Slot
             direction="up"
