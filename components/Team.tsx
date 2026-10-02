@@ -9,6 +9,11 @@ import { fontVelaGxBold, fontVelaMedium } from "./fonts";
  * reproduction. The quote under each name is a placeholder in the
  * design (literal Lorem Ipsum, intentionally blurred with a fade-to-white
  * mask) — kept as-is rather than inventing real quotes for named people.
+ *
+ * Fluid-scaling pass: sizes/gaps in `cqw` against this file's 1440px
+ * reference (see Footer.tsx's doc comment for the technique writeup);
+ * font-sizes use `clamp(floor, Pcqw, ceiling)`. Tracking here was already
+ * authored in `em` (ratio to its own font-size), so it needed no change.
  */
 
 interface Person {
@@ -52,15 +57,15 @@ const PLACEHOLDER_QUOTE = `Lorem Ipsum is simply dummy text of the printing and 
  */
 function PlaceholderQuote() {
   return (
-    <div className="flex w-full items-start gap-1">
+    <div className="flex w-full items-start gap-[0.2778cqw]">
       <Asset
         src="/team/quote-mark.svg"
         alt=""
-        className="h-[15px] w-[15px] shrink-0"
+        className="h-[1.0417cqw] w-[1.0417cqw] shrink-0"
       />
-      <div className="max-h-[68px] flex-1 overflow-hidden transition-[max-height] duration-500 ease-in-out group-hover:max-h-[400px]">
+      <div className="max-h-[4.7222cqw] flex-1 overflow-hidden transition-[max-height] duration-500 ease-in-out group-hover:max-h-[27.7778cqw]">
         <p
-          className={`bg-gradient-to-b from-[#919191] from-[2%] to-white to-[21%] bg-clip-text text-[14px] leading-none tracking-[-0.56px] text-transparent transition-[background-image,color] duration-300 group-hover:bg-none group-hover:text-[#919191] group-hover:leading-[1.5] ${fontVelaMedium}`}
+          className={`bg-gradient-to-b from-[#919191] from-[2%] to-white to-[21%] bg-clip-text text-[clamp(11px,0.9722cqw,15.56px)] leading-none tracking-[-0.04em] text-transparent transition-[background-image,color] duration-300 group-hover:bg-none group-hover:text-[#919191] group-hover:leading-[1.5] ${fontVelaMedium}`}
         >
           {PLACEHOLDER_QUOTE}
         </p>
@@ -68,7 +73,7 @@ function PlaceholderQuote() {
       <Asset
         src="/team/quote-mark.svg"
         alt=""
-        className="h-[15px] w-[15px] shrink-0 rotate-180 self-end opacity-0 transition-opacity duration-300 group-hover:opacity-100"
+        className="h-[1.0417cqw] w-[1.0417cqw] shrink-0 rotate-180 self-end opacity-0 transition-opacity duration-300 group-hover:opacity-100"
       />
     </div>
   );
@@ -76,14 +81,14 @@ function PlaceholderQuote() {
 
 function NameBlock({ name, title }: Person) {
   return (
-    <div className="flex w-full flex-col items-start gap-2">
+    <div className="flex w-full flex-col items-start gap-[0.5556cqw]">
       <p
-        className={`w-full text-[38px] leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}
+        className={`w-full text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}
       >
         {name}
       </p>
       <p
-        className={`w-full text-[18px] leading-[1.2] tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
+        className={`w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
       >
         {title}
       </p>
@@ -97,20 +102,20 @@ function NameBlock({ name, title }: Person) {
 // left/top-1/2 + -translate-1/2, so growing its width/height on hover
 // expands symmetrically from that centre instead of shoving the grid
 // around; `hover:z-20` lifts the now-larger card above whatever it overlaps.
-const WIDE_CARD_HEIGHT = 288; // 224px photo + 32px padding top/bottom
-const SQUARE_CARD_HEIGHT = 536; // 224px photo + 24px gap + 224px text + 64px padding
+const WIDE_CARD_HEIGHT = "20cqw"; // 224px photo + 32px padding top/bottom, at the 1440 reference
+const SQUARE_CARD_HEIGHT = "37.2222cqw"; // 224px photo + 24px gap + 224px text + 64px padding, at the 1440 reference
 
 function WideCard({ person }: { person: Person }) {
   return (
     <div className="relative flex-1" style={{ height: WIDE_CARD_HEIGHT }}>
-      <div className="group absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 flex items-end gap-[24px] rounded-[16px] bg-[#f5f5f5] p-[32px] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-300 hover:z-20 hover:w-[115%] hover:items-start hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]">
+      <div className="group absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 flex items-end gap-[1.6667cqw] rounded-[16px] bg-[#f5f5f5] p-[2.2222cqw] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-300 hover:z-20 hover:w-[115%] hover:items-start hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]">
         <Asset
           src={person.photo}
           alt={person.name}
           fit="cover"
-          className="h-[224px] w-[224px] shrink-0 overflow-hidden rounded-[8px]"
+          className="h-[15.5556cqw] w-[15.5556cqw] shrink-0 overflow-hidden rounded-[8px]"
         />
-        <div className="flex flex-1 flex-col items-start justify-between gap-[24px] self-stretch">
+        <div className="flex flex-1 flex-col items-start justify-between gap-[1.6667cqw] self-stretch">
           <PlaceholderQuote />
           <NameBlock {...person} />
         </div>
@@ -122,14 +127,14 @@ function WideCard({ person }: { person: Person }) {
 function SquareCard({ person }: { person: Person }) {
   return (
     <div className="relative flex-1" style={{ height: SQUARE_CARD_HEIGHT }}>
-      <div className="group absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[24px] rounded-[16px] bg-[#f5f5f5] p-[32px] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-300 hover:z-20 hover:w-[115%] hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]">
+      <div className="group absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[1.6667cqw] rounded-[16px] bg-[#f5f5f5] p-[2.2222cqw] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-300 hover:z-20 hover:w-[115%] hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]">
         <Asset
           src={person.photo}
           alt={person.name}
           fit="cover"
-          className="h-[224px] w-full shrink-0 overflow-hidden rounded-[8px]"
+          className="h-[15.5556cqw] w-full shrink-0 overflow-hidden rounded-[8px]"
         />
-        <div className="flex min-h-[224px] w-full flex-col items-start justify-between">
+        <div className="flex min-h-[15.5556cqw] w-full flex-col items-start justify-between">
           <PlaceholderQuote />
           <NameBlock {...person} />
         </div>
@@ -140,12 +145,12 @@ function SquareCard({ person }: { person: Person }) {
 
 export default function Team() {
   return (
-    <section className="relative z-10 mx-auto w-full max-w-[1440px] px-[80px] py-[100px]">
-      <div className="flex flex-col items-start gap-[48px]">
+    <section className="relative z-10 mx-auto w-full max-w-[1600px] px-[5.5556cqw] py-[6.9444cqw] [container-type:inline-size]">
+      <div className="flex flex-col items-start gap-[3.3333cqw]">
         <p
-          className={`w-[780px] max-w-full text-[#212121] ${fontVelaGxBold}`}
+          className={`w-[54.1667cqw] max-w-full text-[#212121] ${fontVelaGxBold}`}
           style={{
-            fontSize: "clamp(38px, 2.35vw, 47px)",
+            fontSize: "clamp(12.67px, 2.6389cqw, 42.22px)",
             lineHeight: 0.98,
             letterSpacing: "-0.02em",
           }}
@@ -154,20 +159,20 @@ export default function Team() {
           нас вперёд
         </p>
 
-        <div className="flex w-full flex-col items-start gap-[24px]">
-          <div className="flex w-full items-center gap-[24px]">
+        <div className="flex w-full flex-col items-start gap-[1.6667cqw]">
+          <div className="flex w-full items-center gap-[1.6667cqw]">
             {LEADS.map((p) => (
               <WideCard key={p.name} person={p} />
             ))}
           </div>
 
-          <div className="flex w-full items-start gap-[24px]">
+          <div className="flex w-full items-start gap-[1.6667cqw]">
             {TEAM.map((p) => (
               <SquareCard key={p.name} person={p} />
             ))}
           </div>
 
-          <div className="flex w-full items-center gap-[24px]">
+          <div className="flex w-full items-center gap-[1.6667cqw]">
             {MANAGERS.map((p) => (
               <WideCard key={p.name} person={p} />
             ))}

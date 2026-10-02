@@ -23,7 +23,18 @@ import { fontVelaBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
  * from a different side (bottom/left/right, cycling every 3 cards) and
  * continuing to drift gently as the section scrolls past, so every block
  * has its own independent parallax rather than a single shared effect.
+ *
+ * Fluid-scaling pass: positions/sizes in `cqw` against this file's 1440px
+ * reference via the `CQW()` helper (see Footer.tsx's doc comment for the
+ * technique writeup); font-sizes use `clamp(floor, Pcqw, ceiling)`,
+ * tracking is in `em`. The scroll-parallax `DIRECTIONS` distances are also
+ * pre-divided by 14.4 and fed into Framer Motion as `"Ncqw"` strings (same
+ * trick Loader.tsx already uses for its own motion-driven positions), so
+ * the drift distance scales with the container instead of staying a flat
+ * px offset.
  */
+
+const CQW = (px: number) => `${px / 14.4}cqw`;
 
 interface Stat {
   /** small label above the big number, e.g. "более" — omitted when absent */
@@ -95,10 +106,12 @@ const STATS: Stat[] = [
 // cycles bottom → left → right → bottom … per card index, each with its own
 // entrance offset (where it travels in from) and exit drift (the subtle
 // continued parallax once it's settled and the section keeps scrolling).
+// Values are design-px/14.4 (this file's 1440px reference → cqw) so the
+// drift distance scales with the container, same as everything else here.
 const DIRECTIONS = [
-  { x: 0, y: 64, exitX: 0, exitY: -18 }, // bottom
-  { x: -64, y: 0, exitX: 16, exitY: 0 }, // left
-  { x: 64, y: 0, exitX: -16, exitY: 0 }, // right
+  { x: 0, y: 64 / 14.4, exitX: 0, exitY: -18 / 14.4 }, // bottom
+  { x: -64 / 14.4, y: 0, exitX: 16 / 14.4, exitY: 0 }, // left
+  { x: 64 / 14.4, y: 0, exitX: -16 / 14.4, exitY: 0 }, // right
 ];
 
 function StatBlock({ stat, index }: { stat: Stat; index: number }) {
@@ -114,30 +127,30 @@ function StatBlock({ stat, index }: { stat: Stat; index: number }) {
     offset: ["start end", "end start"],
   });
 
-  const x = useTransform(scrollYProgress, [0, 0.35, 1], [dir.x, 0, dir.exitX]);
-  const y = useTransform(scrollYProgress, [0, 0.35, 1], [dir.y, 0, dir.exitY]);
+  const x = useTransform(scrollYProgress, [0, 0.35, 1], [`${dir.x}cqw`, "0cqw", `${dir.exitX}cqw`]);
+  const y = useTransform(scrollYProgress, [0, 0.35, 1], [`${dir.y}cqw`, "0cqw", `${dir.exitY}cqw`]);
   const opacity = useTransform(scrollYProgress, [0, 0.3], [0, 1]);
 
   return (
     <motion.div
       ref={ref}
-      className="absolute w-[162px] border-l border-[#191919] px-[24px]"
-      style={{ left: stat.left, top: stat.top, x, y, opacity }}
+      className="absolute border-l border-[#191919] px-[1.6667cqw]"
+      style={{ left: CQW(stat.left), top: CQW(stat.top), width: "clamp(130px,11.25cqw,180px)", x, y, opacity }}
     >
-      <div className="flex flex-col items-start gap-[8px]">
+      <div className="flex flex-col items-start gap-[0.5556cqw]">
         {stat.prefix && (
-          <p className={`text-[20px] leading-[0.94] tracking-[-1px] text-[#353537] ${fontVelaBold}`}>
+          <p className={`text-[clamp(11px,1.3889cqw,22.22px)] leading-[0.94] tracking-[-0.05em] text-[#353537] ${fontVelaBold}`}>
             {stat.prefix}
           </p>
         )}
-        <p className={`text-[52px] leading-[0.95] tracking-[-1.56px] text-[#191919] ${fontVelaGxExtraBold}`}>
+        <p className={`text-[clamp(17.33px,3.6111cqw,57.78px)] leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxExtraBold}`}>
           {stat.value}
         </p>
-        <p className={`text-[20px] leading-[0.94] tracking-[-1px] text-[#353537] ${fontVelaBold}`}>
+        <p className={`text-[clamp(11px,1.3889cqw,22.22px)] leading-[0.94] tracking-[-0.05em] text-[#353537] ${fontVelaBold}`}>
           {stat.unit}
         </p>
       </div>
-      <p className={`mt-[23px] text-[14px] leading-none tracking-[-0.56px] text-[#353537] ${fontVelaMedium}`}>
+      <p className={`mt-[1.5972cqw] text-[clamp(11px,0.9722cqw,15.56px)] leading-none tracking-[-0.04em] text-[#353537] ${fontVelaMedium}`}>
         {stat.description}
       </p>
     </motion.div>
@@ -146,8 +159,8 @@ function StatBlock({ stat, index }: { stat: Stat; index: number }) {
 
 export default function StatsShowcase() {
   return (
-    <section className="relative z-10 mx-auto w-full max-w-[1440px] overflow-hidden bg-[#F5F5F5]">
-      <div className="relative" style={{ minHeight: 780, paddingBottom: 72 }}>
+    <section className="relative z-10 mx-auto w-full max-w-[1600px] overflow-hidden bg-[#F5F5F5] [container-type:inline-size]">
+      <div className="relative" style={{ minHeight: CQW(780), paddingBottom: CQW(72) }}>
         {STATS.map((stat, i) => (
           <StatBlock key={i} stat={stat} index={i} />
         ))}
@@ -155,8 +168,8 @@ export default function StatsShowcase() {
         {/* the existing animated ring+cone mark, bigger here and with a
             single line travelling dot-to-dot instead of Offer's
             bidirectional fill */}
-        <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: 1027, top: 380 }}>
-          <DecorativeCircleMark size={340} travel="sequential" />
+        <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: CQW(1027), top: CQW(380) }}>
+          <DecorativeCircleMark size={CQW(340)} travel="sequential" />
         </div>
       </div>
     </section>

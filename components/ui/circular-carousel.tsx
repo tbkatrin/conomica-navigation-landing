@@ -160,13 +160,13 @@ export function CircularCarousel({
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       className={cn(
-        "relative flex flex-col items-center justify-center gap-8 outline-none",
+        "relative flex flex-col items-center justify-center gap-[2.2222cqw] outline-none [container-type:inline-size]",
         className,
       )}
     >
       {/* Circular track — spans the full width of the parent container;
           card width and fan radius both derive from its measured width */}
-      <div ref={trackRef} className="relative h-[460px] w-full">
+      <div ref={trackRef} className="relative h-[31.9444cqw] w-full">
         {/* Center content — bottom-anchored to the track's own box (not the
             outer container); combined with the controls row's own
             translateY below, this gives an exact 40px gap to the controls
@@ -178,7 +178,7 @@ export function CircularCarousel({
           className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
         >
           <span
-            className={`text-3xl leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}
+            className={`text-[clamp(11px,2.0833cqw,33.33px)] leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}
           >
             Факты о нас
           </span>
@@ -219,20 +219,20 @@ export function CircularCarousel({
                 aria-selected={isActive}
                 role="option"
                 className={cn(
-                  "absolute left-1/2 top-1/2 flex min-h-[200px] w-1/3 -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col items-start justify-center gap-4 rounded-lg bg-[#f5f5f5] px-8 py-6 text-left",
+                  "absolute left-1/2 top-1/2 flex min-h-[13.8889cqw] w-1/3 -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col items-start justify-center gap-[1.1111cqw] rounded-lg bg-[#f5f5f5] px-[2.2222cqw] py-[1.6667cqw] text-left",
                 )}
                 style={{ transformOrigin: "center center" }}
               >
                 {item.tag && (
                   <span
-                    className={`rounded-full bg-[#161616]/5 px-2 py-0.5 text-[10px] uppercase tracking-wider text-[#161616]/70 ${fontVelaMedium}`}
+                    className={`rounded-full bg-[#161616]/5 px-[0.5556cqw] py-[0.1389cqw] text-[clamp(11px,0.6944cqw,11.11px)] uppercase tracking-wider text-[#161616]/70 ${fontVelaMedium}`}
                   >
                     {item.tag}
                   </span>
                 )}
                 <h3
                   className={cn(
-                    "w-full text-[28px] leading-[0.95] tracking-[-0.02em] text-black",
+                    "w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.02em] text-black",
                     fontVelaGxBold,
                   )}
                 >
@@ -240,7 +240,7 @@ export function CircularCarousel({
                 </h3>
                 <p
                   className={cn(
-                    "w-full text-[18px] leading-[1.2] tracking-[-0.04em] text-[#626262]",
+                    "w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] text-[#626262]",
                     fontVelaMedium,
                   )}
                 >
@@ -253,19 +253,19 @@ export function CircularCarousel({
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-4" style={{ transform: "translateY(-24px)" }}>
+      <div className="flex items-center gap-[1.1111cqw]" style={{ transform: "translateY(-1.6667cqw)" }}>
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}
           onClick={prev}
           aria-label="Previous item"
-          className="-translate-y-2 flex h-10 w-10 items-center justify-center rounded-full border border-[#d8d8d8] bg-[#f5f5f5] text-[#161616]/70 transition-colors hover:bg-[#ececec] hover:text-[#161616] focus-visible:ring-2 focus-visible:ring-[#161616]/20"
+          className="-translate-y-2 flex h-[2.7778cqw] w-[2.7778cqw] items-center justify-center rounded-full border border-[#d8d8d8] bg-[#f5f5f5] text-[#161616]/70 transition-colors hover:bg-[#ececec] hover:text-[#161616] focus-visible:ring-2 focus-visible:ring-[#161616]/20"
         >
-          <ChevronLeft className="size-5" />
+          <ChevronLeft className="size-[1.3889cqw]" />
         </motion.button>
 
         {/* Dot indicators */}
-        <div className="flex items-center gap-1.5" role="tablist">
+        <div className="flex items-center gap-[0.4167cqw]" role="tablist">
           {items.map((_, i) => (
             <button
               key={i}
@@ -273,10 +273,10 @@ export function CircularCarousel({
               aria-selected={i === activeIndex || i === (activeIndex + 1) % total}
               onClick={() => goTo(i)}
               className={cn(
-                "h-1.5 rounded-full transition-all duration-300",
+                "h-[0.4167cqw] rounded-full transition-all duration-300",
                 i === activeIndex || i === (activeIndex + 1) % total
-                  ? "w-6 bg-[#161616]/80"
-                  : "w-1.5 bg-[#161616]/20 hover:bg-[#161616]/40",
+                  ? "w-[1.6667cqw] bg-[#161616]/80"
+                  : "w-[0.4167cqw] bg-[#161616]/20 hover:bg-[#161616]/40",
               )}
               aria-label={`Go to item ${i + 1}`}
             />
@@ -288,9 +288,9 @@ export function CircularCarousel({
           whileTap={{ scale: 0.95 }}
           onClick={next}
           aria-label="Next item"
-          className="-translate-y-2 flex h-10 w-10 items-center justify-center rounded-full border border-[#d8d8d8] bg-[#f5f5f5] text-[#161616]/70 transition-colors hover:bg-[#ececec] hover:text-[#161616] focus-visible:ring-2 focus-visible:ring-[#161616]/20"
+          className="-translate-y-2 flex h-[2.7778cqw] w-[2.7778cqw] items-center justify-center rounded-full border border-[#d8d8d8] bg-[#f5f5f5] text-[#161616]/70 transition-colors hover:bg-[#ececec] hover:text-[#161616] focus-visible:ring-2 focus-visible:ring-[#161616]/20"
         >
-          <ChevronRight className="size-5" />
+          <ChevronRight className="size-[1.3889cqw]" />
         </motion.button>
       </div>
     </div>

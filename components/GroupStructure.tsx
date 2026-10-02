@@ -14,7 +14,18 @@ import { fontVelaGxBold, fontVelaMedium } from "./fonts";
  * trick that broke once positions changed) — drawn as plain inline SVG
  * paths instead of imported rotated assets, so they always exactly meet
  * the card edges and the centre box regardless of future nudges.
+ *
+ * Fluid-scaling pass: `ICON`/`AO_UK`/`CompanyCard`'s left/top/width/gap
+ * stay plain design-px numbers (reused as-is by `Connectors()`'s SVG path
+ * math below, which auto-scales via its own `viewBox` regardless of the
+ * `<svg>`'s final rendered CSS size — no per-point conversion needed
+ * there), and get divided by 14.4 (design-px → cqw, this file's 1440px
+ * reference — see Footer.tsx's doc comment for the technique writeup)
+ * only where they're used as actual CSS `style` positions on the HTML
+ * card/icon divs. Font-sizes use `clamp(floor, Pcqw, ceiling)`.
  */
+
+const CQW = (px: number) => `${px / 14.4}cqw`;
 
 const ICON = { left: 544, top: 436, size: 162 };
 const AO_UK = { left: 475, top: 202, width: 300, bottomX: 625, bottomY: 314 };
@@ -38,17 +49,17 @@ function CompanyCard({
 }) {
   return (
     <div
-      className="absolute flex flex-col items-start rounded-[12px] bg-white px-[40px] py-[32px] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]"
-      style={{ left, top, width, gap }}
+      className="absolute flex flex-col items-start rounded-[12px] bg-white px-[2.7778cqw] py-[2.2222cqw] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]"
+      style={{ left: CQW(left), top: CQW(top), width: CQW(width), gap: CQW(gap) }}
     >
       <p
-        className={`w-full text-[28px] leading-[0.95] tracking-[-0.84px] ${fontVelaGxBold}`}
+        className={`w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em] ${fontVelaGxBold}`}
         style={{ color: titleColor }}
       >
         {title}
       </p>
       <div
-        className={`w-full text-[18px] leading-none tracking-[-0.72px] text-[#626262] ${fontVelaMedium}`}
+        className={`w-full text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
       >
         {description}
       </div>
@@ -84,8 +95,7 @@ function Connectors() {
   return (
     <svg
       className="pointer-events-none absolute left-0 top-0"
-      width={1280}
-      height={800}
+      style={{ width: CQW(1280), height: CQW(800) }}
       viewBox="0 0 1280 800"
       fill="none"
     >
@@ -111,14 +121,14 @@ function Connectors() {
 export default function GroupStructure() {
   return (
     <section
-      className="relative z-10 mx-auto overflow-x-hidden rounded-[24px] bg-white px-[80px] py-[100px]"
-      style={{ maxWidth: 1424, width: "calc(100% - 16px)" }}
+      className="relative z-10 mx-auto w-full overflow-x-hidden rounded-[24px] bg-white px-[5.5556cqw] py-[6.9444cqw] [container-type:inline-size]"
+      style={{ maxWidth: "min(1600px, calc(100% - 16px))" }}
     >
-      <div className="relative" style={{ minHeight: 800 }}>
+      <div className="relative" style={{ minHeight: CQW(800) }}>
         <p
           className={`text-[#161616] ${fontVelaGxBold}`}
           style={{
-            fontSize: "clamp(38px, 2.35vw, 47px)",
+            fontSize: "clamp(12.67px, 2.6389cqw, 42.22px)",
             lineHeight: 0.98,
             letterSpacing: "-0.02em",
           }}
@@ -131,28 +141,28 @@ export default function GroupStructure() {
         {/* centre brand mark — its own bordered card, matching the company cards */}
         <div
           className="absolute flex items-center justify-center rounded-[16px] border border-[#d8d8d8] bg-white"
-          style={{ left: ICON.left, top: ICON.top, width: ICON.size, height: ICON.size }}
+          style={{ left: CQW(ICON.left), top: CQW(ICON.top), width: CQW(ICON.size), height: CQW(ICON.size) }}
         >
           <Asset
             src="/company-structure/sis.svg"
             alt=""
             fit="contain"
-            className="h-[100px] w-[100px]"
+            className="h-[6.9444cqw] w-[6.9444cqw]"
           />
         </div>
 
         {/* АО УК Кономика — the parent holding */}
         <div
-          className="absolute flex flex-col items-start rounded-[12px] bg-white px-[40px] py-[32px] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]"
-          style={{ left: AO_UK.left, top: AO_UK.top, width: AO_UK.width, gap: 13 }}
+          className="absolute flex flex-col items-start rounded-[12px] bg-white px-[2.7778cqw] py-[2.2222cqw] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]"
+          style={{ left: CQW(AO_UK.left), top: CQW(AO_UK.top), width: CQW(AO_UK.width), gap: CQW(13) }}
         >
           <p
-            className={`w-full text-[28px] leading-[0.95] tracking-[-0.84px] text-[#0a1833] ${fontVelaGxBold}`}
+            className={`w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em] text-[#0a1833] ${fontVelaGxBold}`}
           >
             АО УК Кономика
           </p>
           <p
-            className={`w-full text-[18px] leading-none tracking-[-0.72px] text-[#626262] ${fontVelaMedium}`}
+            className={`w-full text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
           >
             Холдинговая компания группы
           </p>

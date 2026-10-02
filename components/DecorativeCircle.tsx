@@ -30,8 +30,13 @@ function dotPoint(i: number, center: number, radius: number) {
  * "muted" tone, by ContactUs.tsx's contact cards, so all three share one
  * implementation instead of separate copies of the same SVG geometry.
  *
- * `size` lets a caller scale the whole mark (dot radius and the cone icon
- * scale proportionally, so a bigger mark doesn't look sparse). `travel`
+ * `size` is purely the rendered CSS box (a number of px, or any CSS length
+ * string — e.g. a `cqw` value so a caller's own container-relative fluid
+ * scaling carries through to this mark too) — the SVG's internal geometry
+ * always uses the fixed `SIZE`/`DOT_RADIUS` reference numbers and lets its
+ * own `viewBox` scale that drawing to whatever box `size` renders as, same
+ * as the cone icon (sized in `%` of the wrapper, not px) — so nothing here
+ * needs to know or recompute an actual pixel scale factor. `travel`
  * switches the line animation:
  *  - "bidirectional" (default, Offer's original ask): each gap between
  *    adjacent dots is split into two half-arcs that grow from each dot
@@ -58,15 +63,14 @@ export function DecorativeCircleMark({
   cone = true,
 }: {
   className?: string;
-  size?: number;
+  size?: number | string;
   travel?: "bidirectional" | "sequential";
   tone?: "brand" | "muted";
   cone?: boolean;
 }) {
-  const scale = size / SIZE;
-  const dotRadius = DOT_RADIUS * scale;
-  const center = size / 2;
-  const ringRadius = size / 2 - dotRadius;
+  const dotRadius = DOT_RADIUS;
+  const center = SIZE / 2;
+  const ringRadius = SIZE / 2 - dotRadius;
   const isMuted = tone === "muted";
 
   const dots = Array.from({ length: DOTS }, (_, i) => dotPoint(i, center, ringRadius));
@@ -98,7 +102,7 @@ export function DecorativeCircleMark({
 
   return (
     <div className={`relative shrink-0 ${className ?? ""}`} style={{ width: size, height: size }}>
-      <svg viewBox={`0 0 ${size} ${size}`} className="absolute inset-0 h-full w-full">
+      <svg viewBox={`0 0 ${SIZE} ${SIZE}`} className="absolute inset-0 h-full w-full">
         <circle cx={center} cy={center} r={ringRadius} fill="none" stroke="#D8D8D8" strokeWidth={1} />
         {!isMuted &&
           arcs.map((d, i) => (
@@ -158,7 +162,7 @@ export function DecorativeCircleMark({
           src={isMuted ? "/hero/cone-grey.svg" : "/hero/cone.svg"}
           alt=""
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ height: 55 * scale, width: 49 * scale }}
+          style={{ height: "23.3051%", width: "20.7627%" }}
         />
       )}
     </div>

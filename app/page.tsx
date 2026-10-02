@@ -15,8 +15,8 @@ export default function Home() {
       <SiteHeader />
       <Hero />
       <div
-        className="relative z-10 mx-auto rounded-[24px] bg-white"
-        style={{ maxWidth: 1424, width: "calc(100% - 16px)", marginTop: 32 }}
+        className="relative z-10 mx-auto w-full rounded-[24px] bg-white [container-type:inline-size]"
+        style={{ maxWidth: "min(1600px, calc(100% - 16px))", marginTop: "2.2222cqw" }}
       >
         <HeroShowcase />
         <Offer />

@@ -12,6 +12,22 @@
  * source screenshots' perspective, not a mistake), so the macbook slot
  * uses `anchorB` to give each variant its own exact rest box while every
  * other slot shares one anchor.
+ *
+ * Fluid-scaling pass: the box itself used to be a fixed 1330×584px size;
+ * it's now sized as `93.3989cqw` of the OUTER page wrapper (1330/1424 —
+ * its own proportion of that wrapper at the 1440 reference, see
+ * app/page.tsx) — no additional ceiling needed since that outer wrapper
+ * already caps at 1600px itself, so this box's growth stops right along
+ * with it. `aspectRatio` keeps its height locked to that fluid width
+ * instead of a fixed 584px. The box itself then becomes a
+ * *nested* `[container-type:inline-size]` context, so everything inside
+ * it (logo/badge/headline/text/macbook positions, via the `CQW()` helper)
+ * scales in `cqw` against *its own* rendered width — 1330px is this
+ * file's own reference (see Footer.tsx's doc comment for the general
+ * technique). Font-sizes use `clamp(floor, Pcqw, ceiling)`, tracking is in
+ * `em`. ui/edge-slide.tsx's travel distance switched from a fixed px
+ * frame size to `100cqw`/`100cqh` (one full box width/height, whatever
+ * that currently renders as) — see that file's own doc comment.
  */
 
 import { useScroll, useTransform, useReducedMotion } from "motion/react";
@@ -20,7 +36,7 @@ import Asset from "./Asset";
 import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaGxRegular, fontVelaMedium } from "./fonts";
 import { Slot } from "./ui/edge-slide";
 
-const FRAME = { width: 1330, height: 584 };
+const CQW = (px: number) => `${px / 13.3}cqw`;
 
 interface MockupBox {
   left: number;
@@ -57,9 +73,9 @@ interface Variant {
 
 // Shared slot geometry for the pieces both variants render at the same
 // size — only the macbook (see anchorB below) differs per variant.
-const LOGO_POS = { left: 80, top: 56 };
-const BADGE_POS = { left: 1047, top: 47 };
-const TEXT_BLOCK = { left: 70, top: 320, width: 360 };
+const LOGO_POS = { left: CQW(80), top: CQW(56) };
+const BADGE_POS = { left: CQW(1047), top: CQW(47) };
+const TEXT_BLOCK = { left: CQW(70), top: CQW(320), width: CQW(360) };
 
 const VARIANTS: [Variant, Variant] = [
   {
@@ -72,7 +88,7 @@ const VARIANTS: [Variant, Variant] = [
     ),
     badge: {
       icon: "/products-promo/bank-icon.svg",
-      iconClassName: "h-[30px] w-[33px]",
+      iconClassName: "h-[2.2556cqw] w-[2.4812cqw]",
       lines: ["Лицензия", "Центробанка РФ"],
     },
     ctaHref: "https://conomica-finance.ru/",
@@ -94,7 +110,7 @@ const VARIANTS: [Variant, Variant] = [
     ),
     badge: {
       icon: "/hero/badge-skolkovo.svg",
-      iconClassName: "h-[43px] w-[42.685px]",
+      iconClassName: "h-[3.2331cqw] w-[3.2094cqw]",
       lines: ["Резидент", "Сколково"],
     },
     ctaHref: "https://cabinet.conomica.space/",
@@ -111,14 +127,14 @@ const VARIANTS: [Variant, Variant] = [
 ];
 
 function anchorFor(mockup: MockupBox) {
-  return { left: mockup.left, top: mockup.top, width: mockup.width, height: mockup.height };
+  return { left: CQW(mockup.left), top: CQW(mockup.top), width: CQW(mockup.width), height: CQW(mockup.height) };
 }
 
 function InfoBadge({ icon, iconClassName, lines }: Variant["badge"]) {
   return (
-    <div className="flex items-center gap-[24px] rounded-[8px] bg-white px-[28px] py-[16px] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]">
+    <div className="flex items-center gap-[1.8045cqw] rounded-[8px] bg-white px-[2.1053cqw] py-[1.203cqw] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]">
       <Asset src={icon} alt="" className={iconClassName} />
-      <p className={`whitespace-nowrap text-[18px] leading-none tracking-[-0.72px] text-[#191919] ${fontVelaMedium}`}>
+      <p className={`whitespace-nowrap text-[clamp(11px,1.3534cqw,20px)] leading-none tracking-[-0.04em] text-[#191919] ${fontVelaMedium}`}>
         {lines[0]}
         <br />
         {lines[1]}
@@ -129,11 +145,11 @@ function InfoBadge({ icon, iconClassName, lines }: Variant["badge"]) {
 
 function MiniLogo({ product }: { product: string }) {
   return (
-    <div className="flex items-center gap-[16px]">
-      <Asset src="/hero/sis-icon.svg" alt="" className="h-[34.285px] w-[30.421px]" />
-      <div className="flex flex-col items-start gap-[2px]">
-        <Asset src="/hero/product-wordmark.svg" alt="Conomica" className="h-[25.158px] w-[147.231px]" />
-        <p className={`text-[16px] text-[#161616] ${fontVelaGxRegular}`}>{product}</p>
+    <div className="flex items-center gap-[1.203cqw]">
+      <Asset src="/hero/sis-icon.svg" alt="" className="h-[2.5778cqw] w-[2.2874cqw]" />
+      <div className="flex flex-col items-start gap-[0.1504cqw]">
+        <Asset src="/hero/product-wordmark.svg" alt="Conomica" className="h-[1.8916cqw] w-[11.07cqw]" />
+        <p className={`text-[clamp(11px,1.203cqw,17.78px)] text-[#161616] ${fontVelaGxRegular}`}>{product}</p>
       </div>
     </div>
   );
@@ -142,8 +158,8 @@ function MiniLogo({ product }: { product: string }) {
 function HeadlineCenter({ productName }: { productName: string }) {
   return (
     <div className={`text-center text-black ${fontVelaGxExtraBold}`}>
-      <p className="text-[52px] leading-[0.95] tracking-[-1.56px]">Conomica</p>
-      <p className={`text-[38px] leading-[0.98] tracking-[-1.14px] ${fontVelaGxBold}`}>{productName}</p>
+      <p className="text-[clamp(17.33px,3.9098cqw,57.78px)] leading-[0.95] tracking-[-0.03em]">Conomica</p>
+      <p className={`text-[clamp(12.67px,2.8571cqw,42.22px)] leading-[0.98] tracking-[-0.03em] ${fontVelaGxBold}`}>{productName}</p>
     </div>
   );
 }
@@ -151,15 +167,15 @@ function HeadlineCenter({ productName }: { productName: string }) {
 function TextBlock({ headline, ctaHref }: { headline: ReactNode; ctaHref?: string }) {
   const CtaTag = ctaHref ? "a" : "button";
   return (
-    <div className="flex flex-col items-start gap-[10px]" style={{ width: TEXT_BLOCK.width }}>
-      <p className={`text-[28px] leading-[0.95] tracking-[-0.84px] text-[#191919] ${fontVelaGxBold}`}>
+    <div className="flex flex-col items-start gap-[0.7519cqw]" style={{ width: TEXT_BLOCK.width }}>
+      <p className={`text-[clamp(11px,2.1053cqw,31.11px)] leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}>
         {headline}
       </p>
       <CtaTag
         {...(ctaHref ? { href: ctaHref, target: "_blank", rel: "noopener noreferrer" } : {})}
-        className="flex h-[48px] w-[160px] items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
+        className="flex h-[3.609cqw] w-[12.0301cqw] items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
       >
-        <span className={`text-[16px] leading-[1.2] tracking-[0.16px] text-white ${fontVelaMedium}`}>
+        <span className={`text-[clamp(11px,1.203cqw,17.78px)] leading-[1.2] tracking-[0.01em] text-white ${fontVelaMedium}`}>
           На платформу
         </span>
       </CtaTag>
@@ -225,17 +241,22 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
     <section ref={wrapRef} className="relative w-full" style={{ height: `${scrollLength}vh` }}>
       <div
         className="sticky top-0 flex h-screen w-full items-start justify-center overflow-hidden"
-        // Centers the 584px-tall box the same way `items-center` would on
-        // ordinary viewports, but caps the top gap at 120px — on a tall
-        // (e.g. 27"+) monitor, true centering pushes the whole box, and the
-        // moment it first scrolls into view, well below the fold, leaving a
-        // big blank gap under the product cards until you scroll further.
+        // Centers the box the same way `items-center` would on ordinary
+        // viewports, but caps the top gap at 120px — on a tall (e.g. 27"+)
+        // monitor, true centering pushes the whole box, and the moment it
+        // first scrolls into view, well below the fold, leaving a big
+        // blank gap under the product cards until you scroll further.
+        // The literal 584 here is just the box's reference height at the
+        // 1440 breakpoint — an approximation for this centering math, not
+        // pixel-critical now that the box's actual height is fluid.
         style={{ paddingTop: "clamp(0px, calc((100vh - 584px) / 2), 120px)" }}
       >
-        <div className="relative mx-auto h-[584px] w-[1330px] max-w-full overflow-hidden rounded-[8px] bg-white">
+        <div
+          className="relative mx-auto max-w-full overflow-hidden rounded-[8px] bg-white [container-type:size]"
+          style={{ width: "93.3989cqw", aspectRatio: "1330 / 584" }}
+        >
           <Slot
             direction="up"
-            frame={FRAME}
             anchor={LOGO_POS}
             progress={progress}
             variants={VARIANTS}
@@ -243,7 +264,6 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
           />
           <Slot
             direction="right"
-            frame={FRAME}
             anchor={BADGE_POS}
             progress={progress}
             variants={VARIANTS}
@@ -251,19 +271,17 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
           />
           <Slot
             direction="down"
-            frame={FRAME}
             anchor={{ left: 0, top: 0, width: "100%", height: "100%" }}
             progress={progress}
             variants={VARIANTS}
             render={(v) => (
-              <div className="flex h-full w-full items-center justify-center px-[64px]">
+              <div className="flex h-full w-full items-center justify-center px-[4.812cqw]">
                 <HeadlineCenter productName={v.productName} />
               </div>
             )}
           />
           <Slot
             direction="left"
-            frame={FRAME}
             anchor={TEXT_BLOCK}
             progress={progress}
             variants={VARIANTS}
@@ -271,7 +289,6 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
           />
           <Slot
             direction="right"
-            frame={FRAME}
             anchor={anchorFor(VARIANTS[0].mockup)}
             anchorB={anchorFor(VARIANTS[1].mockup)}
             progress={progress}
