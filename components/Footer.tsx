@@ -48,7 +48,8 @@ function SocialCard({ href, className, children }: { href: string; className?: s
 export default function Footer() {
   return (
     <footer className="relative w-full bg-[#191919]">
-      <div className="mx-auto flex w-full max-w-[1600px] flex-col items-start gap-[2.7778cqw] px-[6.9444cqw] py-[5cqw] [container-type:inline-size]">
+      <div className="mx-auto w-full max-w-[1600px] [container-type:inline-size]">
+      <div className="flex w-full flex-col items-start gap-[2.7778cqw] px-[6.9444cqw] py-[5cqw]">
         <div className="flex w-full items-start justify-between gap-[4.4444cqw]">
           {/* companies */}
           <div className="flex flex-col items-start gap-[2.2222cqw]">
@@ -149,6 +150,7 @@ export default function Footer() {
             </p>
           </div>
         </div>
+      </div>
       </div>
     </footer>
   );

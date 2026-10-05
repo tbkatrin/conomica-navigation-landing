@@ -145,8 +145,8 @@ function SquareCard({ person }: { person: Person }) {
 
 export default function Team() {
   return (
-    <section className="relative z-10 mx-auto w-full max-w-[1600px] px-[5.5556cqw] py-[6.9444cqw] [container-type:inline-size]">
-      <div className="flex flex-col items-start gap-[3.3333cqw]">
+    <section className="relative z-10 mx-auto w-full max-w-[1600px] [container-type:inline-size]">
+      <div className="flex flex-col items-start gap-[3.3333cqw] px-[5.5556cqw] py-[6.9444cqw]">
         <p
           className={`w-[54.1667cqw] max-w-full text-[#212121] ${fontVelaGxBold}`}
           style={{

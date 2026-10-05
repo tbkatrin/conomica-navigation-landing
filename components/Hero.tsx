@@ -1,16 +1,16 @@
 import type { ReactNode } from "react";
 import Asset from "./Asset";
 import HeroWaveBackground from "./HeroWaveBackground";
-import { fontVelaGxBold, fontVelaMedium } from "./fonts";
+import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
 
 /**
  * Hero — redesigned per Figma node 380:2144 (replaces the earlier
- * node 218:2027 version this file used before): centered uppercase
- * headline with a right-aligned note above it, and three taller product
- * cards each showing an angled MacBook mockup peeking out from behind its
- * text instead of a plain name+button row. The big logo that used to live
- * here is gone — the header (SiteHeader.tsx) now shows the small logo
- * permanently instead of only after scrolling past this section.
+ * node 218:2027 version this file used before): a big logo top-left, a
+ * right-aligned two-tone headline (layer "Hero-заголовок"), and three taller
+ * product cards each showing an angled MacBook mockup peeking out from
+ * behind its text instead of a plain name+button row. The header
+ * (SiteHeader.tsx) stays transparent with no logo while this section is
+ * on screen, then switches to the small logo once it scrolls away.
  *
  * The background is the animated WebGL "wave" shader (see
  * HeroWaveBackground.tsx), ported from a reference supplied by the user,
@@ -88,7 +88,6 @@ interface Product {
   description: ReactNode;
   href: string;
   nameGap: string;
-  nameAlign: "items-center" | "items-start";
   nameWidth?: string;
   laptop: LaptopSpec;
 }
@@ -105,7 +104,6 @@ const PRODUCTS: Product[] = [
     ),
     href: "https://conomica-finance.ru/",
     nameGap: "1.1111cqw",
-    nameAlign: "items-center",
     laptop: {
       left: "-6.625cqw",
       top: 198,
@@ -129,7 +127,6 @@ const PRODUCTS: Product[] = [
     ),
     href: "https://cabinet.conomica.space/",
     nameGap: "1.1111cqw",
-    nameAlign: "items-start",
     nameWidth: "12.5cqw",
     laptop: {
       left: "-8.568cqw",
@@ -155,7 +152,6 @@ const PRODUCTS: Product[] = [
     ),
     href: "https://corp.rescore.online/",
     nameGap: "0.6944cqw",
-    nameAlign: "items-center",
     nameWidth: "10.0694cqw",
     laptop: {
       left: "-6.273cqw",
@@ -175,7 +171,7 @@ function ProductCard({ product }: { product: Product }) {
   return (
     <div className="relative flex h-full flex-1 flex-col items-start justify-between overflow-hidden rounded-[24px] bg-white px-[2.7778cqw] py-[2.2222cqw] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]">
       <div className="relative z-[1] flex w-full items-end justify-between">
-        <div className={`flex flex-col ${product.nameAlign} justify-center`} style={{ gap: product.nameGap, width: product.nameWidth }}>
+        <div className="flex flex-col items-start justify-center" style={{ gap: product.nameGap, width: product.nameWidth }}>
           <p className={`text-[clamp(11px,0.9722cqw,15.56px)] leading-none tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}>
             {product.eyebrow}
           </p>
@@ -211,32 +207,39 @@ export default function Hero() {
     <section id="hero" className="relative w-full overflow-hidden bg-[#F5F5F5]">
       <HeroWaveBackground className="pointer-events-none absolute inset-0 overflow-hidden" />
 
-      <div
-        className="relative mx-auto w-full max-w-[1600px] [container-type:inline-size]"
-        style={{ minHeight: "94.0972cqw" }}
-      >
-        {/* Headline + note */}
-        <div
-          className="absolute flex flex-col items-center gap-[4.5139cqw]"
-          style={{ left: "2.5694cqw", top: "10.625cqw", width: "95.2083cqw" }}
-        >
-          <div className="flex w-full justify-end px-[2.7778cqw]">
-            <p
-              className={`text-right text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-[#191919] ${fontVelaMedium}`}
-              style={{ width: "16.7361cqw" }}
-            >
-              Опыт группы компаний во взыскании более 9 лет
+      <div className="relative mx-auto w-full max-w-[1600px] [container-type:inline-size]">
+        <div aria-hidden style={{ height: "94.0972cqw" }} />
+        {/* Big logo mark — ordinary page content, not part of the fixed
+            header (see SiteHeader.tsx); scrolls away with the rest of Hero.
+            z-[60] keeps it above the header's z-50 so the header's own
+            backdrop-blur doesn't blur the logo underneath it. */}
+        <div className="absolute z-[60] flex items-center gap-[1.6667cqw]" style={{ left: "2.3611cqw", top: "3.125cqw" }}>
+          <Asset src="/hero/cone.svg" alt="" className="h-[4.6528cqw] w-[4.0972cqw]" />
+          <div className="flex flex-col items-start gap-[0.2778cqw]">
+            <Asset src="/hero/conomica-wordmark.svg" alt="Conomica" className="h-[3.8889cqw] w-[22.7083cqw]" />
+            <p className={`text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em] text-[#161616] ${fontVelaGxBold}`}>
+              группа компаний
             </p>
           </div>
-          <h1
-            className={`text-center uppercase leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
-            style={{ fontSize: "clamp(17.33px, 3.6111cqw, 57.78px)", width: "clamp(260px, 42.5cqw, 680px)" }}
-          >
-            <span className="block">Экосистема</span>
-            <span className="block">fintech продуктов</span>
-            <span className="block">от группы компаний Conomica</span>
-          </h1>
         </div>
+
+        {/* Headline — Figma layer "Hero-заголовок" (node 429:1988) */}
+        <h1
+          id="hero-headline"
+          className={`absolute text-right leading-[0.95] tracking-[-0.03em] text-[#353537] ${fontVelaGxExtraBold}`}
+          style={{
+            right: "2.8472cqw",
+            top: "30.3472cqw",
+            width: "clamp(260px, 42.1528cqw, 674px)",
+            fontSize: "clamp(17.33px, 3.6111cqw, 57.78px)",
+          }}
+        >
+          <span className="block text-[#00703e]">Экосистема</span>
+          <span className="block">финтех-продуктов</span>
+          <span className="block">
+            группы <span className="text-[#00703e]">CONOMICA</span>
+          </span>
+        </h1>
 
         {/* Product cards */}
         <div

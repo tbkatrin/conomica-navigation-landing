@@ -68,20 +68,15 @@ void main() {
   vec2 p = (uv - 0.5) * vec2(aspect, 1.0);
   float t = uTime;
 
-  // Fades ribbons out toward the horizontal center (where the centered
-  // headline sits) and back in toward each side, so the waves read as
-  // framing the text from left/right instead of cutting through it.
+  // Fades ribbons out toward the horizontal center, where the centered
+  // headline sits, so the waves don't cut through the text.
   float centerFade = smoothstep(0.0, 0.38, abs(p.x));
-  // Folding the x coordinate mirrors the whole ribbon pattern across the
-  // vertical center line, so the same cluster of waves appears on both
-  // sides instead of the original tuning's naturally one-sided lean.
-  vec2 pf = vec2(abs(p.x), p.y);
 
   vec3 col = uBg;
   vec4 r;
-  r = ribbon(pf, t,  0.55, -0.25, 0.075, 2.2, 0.15, 2.0, 0.0, 1.0);  col = mix(col, r.rgb, min(1.0, r.a * 1.15 * centerFade));
-  r = ribbon(pf, t,  0.45,  0.30, 0.09, 1.8, 0.18, 1.6, 2.1, 0.8);  col = mix(col, r.rgb, min(1.0, r.a * 1.05 * centerFade));
-  r = ribbon(pf, t,  0.70,  0.05, 0.06, 2.8, 0.11, 2.6, 4.3, 1.2);  col = mix(col, r.rgb, r.a * 0.95 * centerFade);
+  r = ribbon(p, t,  0.55, -0.25, 0.075, 2.2, 0.15, 2.0, 0.0, 1.0);  col = mix(col, r.rgb, min(1.0, r.a * 1.15 * centerFade));
+  r = ribbon(p, t,  0.45,  0.30, 0.09, 1.8, 0.18, 1.6, 2.1, 0.8);  col = mix(col, r.rgb, min(1.0, r.a * 1.05 * centerFade));
+  r = ribbon(p, t,  0.70,  0.05, 0.06, 2.8, 0.11, 2.6, 4.3, 1.2);  col = mix(col, r.rgb, r.a * 0.95 * centerFade);
 
   col += (hash(gl_FragCoord.xy + fract(t) * 100.0) - 0.5) * 0.03;
   gl_FragColor = vec4(col, 1.0);

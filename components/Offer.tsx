@@ -110,7 +110,8 @@ function SolutionCard({
 
 export default function Offer() {
   return (
-    <section className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col items-center gap-[4.4444cqw] overflow-x-hidden bg-white px-[2.2222cqw] [container-type:inline-size]">
+    <section className="relative z-10 mx-auto w-full max-w-[1600px] overflow-x-hidden bg-white [container-type:inline-size]">
+      <div className="flex w-full flex-col items-center gap-[4.4444cqw] px-[2.2222cqw]">
       <div className="flex w-full flex-col items-start gap-[4.4444cqw]">
         <div className="flex w-full items-start gap-[1.6667cqw]">
           <div className="flex flex-1 items-start">
@@ -181,6 +182,7 @@ export default function Offer() {
       </div>
 
       <Divider />
+      </div>
     </section>
   );
 }

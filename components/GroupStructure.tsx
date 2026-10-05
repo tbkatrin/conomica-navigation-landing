@@ -121,9 +121,10 @@ function Connectors() {
 export default function GroupStructure() {
   return (
     <section
-      className="relative z-10 mx-auto w-full overflow-x-hidden rounded-[24px] bg-white px-[5.5556cqw] py-[6.9444cqw] [container-type:inline-size]"
+      className="relative z-10 mx-auto w-full overflow-x-hidden rounded-[24px] bg-white [container-type:inline-size]"
       style={{ maxWidth: "min(1600px, calc(100% - 16px))" }}
     >
+      <div className="px-[5.5556cqw] py-[6.9444cqw]">
       <div className="relative" style={{ minHeight: CQW(800) }}>
         <p
           className={`text-[#161616] ${fontVelaGxBold}`}
@@ -231,6 +232,7 @@ export default function GroupStructure() {
           title="ООО «Про Фактор»"
           description="Юридическая компания, обеспечивающая полный цикл юридического сопровождения компаний группы."
         />
+      </div>
       </div>
     </section>
   );

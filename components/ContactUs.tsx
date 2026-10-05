@@ -120,7 +120,8 @@ function ContactCard({
 
 export default function ContactUs() {
   return (
-    <section className="relative z-10 mx-auto flex w-full max-w-[1600px] flex-col items-start gap-[4.4444cqw] px-[5.6944cqw] py-[6.9444cqw] [container-type:inline-size]">
+    <section className="relative z-10 mx-auto w-full max-w-[1600px] [container-type:inline-size]">
+      <div className="flex w-full flex-col items-start gap-[4.4444cqw] px-[5.6944cqw] py-[6.9444cqw]">
       <p
         className={`w-full max-w-[37.4306cqw] text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#212121] ${fontVelaGxBold}`}
       >
@@ -141,6 +142,7 @@ export default function ContactUs() {
           labelPosition="top"
           mark={{ top: "13.0556cqw", left: "-1.7361cqw", size: "8.8889cqw", cone: false }}
         />
+      </div>
       </div>
     </section>
   );

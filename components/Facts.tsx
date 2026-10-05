@@ -55,10 +55,12 @@ const facts = [
 export default function Facts() {
   return (
     <section
-      className="relative z-10 mx-auto w-full rounded-[24px] bg-white py-[6.9444cqw] [container-type:inline-size]"
+      className="relative z-10 mx-auto w-full rounded-[24px] bg-white [container-type:inline-size]"
       style={{ maxWidth: "min(1600px, calc(100% - 16px))" }}
     >
-      <CircularCarousel items={facts} />
+      <div className="py-[6.9444cqw]">
+        <CircularCarousel items={facts} />
+      </div>
     </section>
   );
 }
