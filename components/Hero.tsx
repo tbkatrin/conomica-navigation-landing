@@ -1,6 +1,7 @@
-import type { CSSProperties, ReactNode } from "react";
+import type { CSSProperties } from "react";
 import Asset from "./Asset";
-import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
+import { fontVelaGxBold, fontVelaGxExtraBold } from "./fonts";
+import HeroProducts from "./HeroProducts";
 
 /**
  * Hero — the earlier variant (Figma node 218:2027 / frame 225:5804),
@@ -29,48 +30,6 @@ const WAVE_EXTRA = "max(0px, calc((100vw + 90px) * 0.29389 - 497px))";
  * edge (card height 9.7222cqw + a 1.6667cqw gap) falls below the first
  * screen — and never above a 30cqw floor on very short windows. */
 const CARDS_TOP = "max(30cqw, min(calc(42.7778cqw + var(--wave-extra)), calc(100svh - 11.3889cqw)))";
-
-function ProductCard({
-  name,
-  sub,
-  description,
-  href,
-}: {
-  name: string;
-  sub: string;
-  /** shown instead of the name on hover/focus (Figma node 468:2687) */
-  description: ReactNode;
-  href?: string;
-}) {
-  const CtaTag = href ? "a" : "button";
-  return (
-    <div className="group flex h-[9.7222cqw] flex-1 items-center justify-between gap-[1.6667cqw] rounded-[16px] bg-white px-[2.2222cqw] py-[1.6667cqw] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]">
-      <div className="relative h-full min-w-0 flex-1">
-        <div
-          className={`flex h-full flex-col justify-center text-black transition-opacity duration-300 group-focus-within:opacity-0 group-hover:opacity-0 ${fontVelaGxBold}`}
-        >
-          <p className="text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em]">{name}</p>
-          <p className="text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em]">{sub}</p>
-        </div>
-        <p
-          aria-hidden
-          className={`absolute inset-0 flex items-center text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-[#191919] opacity-0 transition-opacity duration-300 group-focus-within:opacity-100 group-hover:opacity-100 ${fontVelaMedium}`}
-        >
-          <span>{description}</span>
-        </p>
-      </div>
-      <CtaTag
-        {...(href ? { href, target: "_blank", rel: "noopener noreferrer" } : {})}
-        className="flex h-[3.3333cqw] shrink-0 items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
-        style={{ width: "clamp(110px, 11.1111cqw, 177.78px)" }}
-      >
-        <span className={`text-[clamp(11px,1.1111cqw,17.78px)] leading-[1.2] tracking-[0.01em] text-white ${fontVelaMedium}`}>
-          На платформу
-        </span>
-      </CtaTag>
-    </div>
-  );
-}
 
 export default function Hero() {
   return (
@@ -134,45 +93,10 @@ export default function Hero() {
         </h1>
 
         {/* Product row */}
-        <div
+        <HeroProducts
           className="absolute flex items-center gap-[1.4583cqw]"
           style={{ left: "2.3611cqw", top: "var(--cards-top)", width: "calc(100% - 4.7222cqw)" }}
-        >
-          <ProductCard
-            name="Conomica"
-            sub="займы"
-            description={
-              <>
-                <span className="text-[#00703E]">Инвестиции</span> в&nbsp;займы для&nbsp;бизнеса с&nbsp;обеспечением дебиторской
-                задолженностью контрагентов
-              </>
-            }
-            href="https://conomica-finance.ru/"
-          />
-          <ProductCard
-            name="Conomica"
-            sub="цессии"
-            description={
-              <>
-                <span className="text-[#00703E]">Сервис</span> для&nbsp;приобретения ликвидной дебиторской
-                задолженности: инструменты для&nbsp;роста капитала
-              </>
-            }
-            href="https://cabinet.conomica.space/"
-          />
-          <ProductCard
-            name="Rescore"
-            sub="online"
-            description={
-              <>
-                <span className="text-[#00703E]">Сервис</span> сбора, анализа и мониторинга
-                <br />
-                данных о&nbsp;платежеспособности контрагентов
-              </>
-            }
-            href="https://corp.rescore.online/"
-          />
-        </div>
+        />
       </div>
     </section>
   );
