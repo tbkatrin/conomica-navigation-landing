@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
+import Asset from "@/components/Asset";
 import { fontVelaGxBold, fontVelaMedium } from "@/components/fonts";
 
 export interface CarouselItem {
@@ -33,6 +34,53 @@ const CARD_WIDTH_RATIO = 1 / 3;
 // Original ellipse's Y-to-X aspect ratio (130/340), reused so the arc
 // keeps the same proportions once radiusX is derived below.
 const RADIUS_Y_TO_X_RATIO = 130 / 340;
+
+const CARD_BASE =
+  "relative flex flex-col items-start justify-start gap-[1.3889cqw] rounded-[24px] px-[2.2222cqw] py-[2.2222cqw]";
+
+function renderCardContent(item: CarouselItem, isGreen: boolean) {
+  return (
+    <>
+      <span
+        className={cn(
+          "flex h-[3.8889cqw] w-[3.8889cqw] shrink-0 items-center justify-center rounded-[16px] transition-colors duration-500",
+          isGreen ? "bg-white" : "bg-[#00703e]",
+        )}
+      >
+        <Asset
+          src={isGreen ? "/hero/cone.svg" : "/footer/cone-sis-white.svg"}
+          alt=""
+          className="h-[1.9444cqw] w-[1.7471cqw]"
+        />
+      </span>
+      {item.tag && (
+        <span
+          className={`rounded-full bg-[#161616]/5 px-[0.5556cqw] py-[0.1389cqw] text-[clamp(11px,0.6944cqw,11.11px)] uppercase tracking-wider text-[#161616]/70 ${fontVelaMedium}`}
+        >
+          {item.tag}
+        </span>
+      )}
+      <h3
+        className={cn(
+          "w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.02em] transition-colors duration-500",
+          isGreen ? "text-white" : "text-[#161616]",
+          fontVelaGxBold,
+        )}
+      >
+        {item.title}
+      </h3>
+      <p
+        className={cn(
+          "w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] transition-colors duration-500",
+          isGreen ? "text-white/85" : "text-[#626262]",
+          fontVelaMedium,
+        )}
+      >
+        {item.description}
+      </p>
+    </>
+  );
+}
 
 function mod(n: number, m: number) {
   return ((n % m) + m) % m;
@@ -160,29 +208,41 @@ export function CircularCarousel({
       onFocus={() => setIsFocused(true)}
       onBlur={() => setIsFocused(false)}
       className={cn(
-        "relative flex flex-col items-center justify-center gap-[2.2222cqw] outline-none [container-type:inline-size]",
+        "relative flex flex-col items-center justify-center gap-[1.6667cqw] outline-none [container-type:inline-size]",
         className,
       )}
     >
+      {/* Heading — H2, left edge aligned to the left edge of the left
+          active card (card width is a third of the track, and the two
+          active cards sit symmetrically around the center with a fixed
+          gap between them). */}
+      <h2
+        className={`mb-[1.6667cqw] w-full text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
+        style={{ paddingLeft: Math.max(0, trackWidth / 2 - cardWidth - ACTIVE_GAP / 2) }}
+      >
+        Факты о нас
+      </h2>
+
       {/* Circular track — spans the full width of the parent container;
           card width and fan radius both derive from its measured width */}
-      <div ref={trackRef} className="relative h-[31.9444cqw] w-full">
-        {/* Center content — bottom-anchored to the track's own box (not the
-            outer container); combined with the controls row's own
-            translateY below, this gives an exact 40px gap to the controls
-            row below */}
-        <motion.div
-          initial={{ opacity: 0, y: -24 }}
-          animate={{ opacity: 1, y: -32 }}
-          transition={{ duration: 0.4, ease: "easeOut" }}
-          className="pointer-events-none absolute inset-x-0 bottom-0 flex justify-center"
-        >
-          <span
-            className={`text-[clamp(11px,2.0833cqw,33.33px)] leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}
-          >
-            Факты о нас
-          </span>
-        </motion.div>
+      <div ref={trackRef} className="relative w-full" style={{ paddingTop: radiusY }}>
+        {/* All cards share one grid cell and stretch to that cell's height
+            — so every card is as tall as the tallest one. Invisible copies
+            of every item (not only the six on screen) keep that height
+            constant as the carousel rotates; shorter cards simply grow
+            extra space at the bottom. The active pair is lifted by radiusY
+            (see getItemPosition), so padding the track by the same amount
+            puts the pair's top edge exactly at the track's top edge. */}
+        <div className="grid grid-cols-[100%]">
+          {items.map((item) => (
+            <div
+              key={`sizer-${item.id}`}
+              aria-hidden
+              className={`pointer-events-none invisible w-1/3 justify-self-center [grid-area:1/1] ${CARD_BASE}`}
+            >
+              {renderCardContent(item, false)}
+            </div>
+          ))}
         <AnimatePresence mode="popLayout">
           {items.map((item, i) => {
             const pos = getItemPosition(
@@ -196,6 +256,9 @@ export function CircularCarousel({
             if (!pos) return null;
 
             const isActive = i === activeIndex || i === (activeIndex + 1) % total;
+            // Of the two active cards, only the left one is green; the
+            // right one stays light (same as every inactive card).
+            const isGreen = i === activeIndex;
 
             return (
               <motion.button
@@ -219,41 +282,22 @@ export function CircularCarousel({
                 aria-selected={isActive}
                 role="option"
                 className={cn(
-                  "absolute left-1/2 top-1/2 flex min-h-[13.8889cqw] w-1/3 -translate-x-1/2 -translate-y-1/2 cursor-pointer flex-col items-start justify-center gap-[1.1111cqw] rounded-lg bg-[#f5f5f5] px-[2.2222cqw] py-[1.6667cqw] text-left",
+                  "w-1/3 cursor-pointer self-stretch justify-self-center text-left shadow-[4px_4px_34px_rgba(0,0,0,0.11)] transition-colors duration-500 [grid-area:1/1]",
+                  CARD_BASE,
+                  isGreen ? "bg-[#00703e]" : "bg-white",
                 )}
                 style={{ transformOrigin: "center center" }}
               >
-                {item.tag && (
-                  <span
-                    className={`rounded-full bg-[#161616]/5 px-[0.5556cqw] py-[0.1389cqw] text-[clamp(11px,0.6944cqw,11.11px)] uppercase tracking-wider text-[#161616]/70 ${fontVelaMedium}`}
-                  >
-                    {item.tag}
-                  </span>
-                )}
-                <h3
-                  className={cn(
-                    "w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.02em] text-black",
-                    fontVelaGxBold,
-                  )}
-                >
-                  {item.title}
-                </h3>
-                <p
-                  className={cn(
-                    "w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] text-[#626262]",
-                    fontVelaMedium,
-                  )}
-                >
-                  {item.description}
-                </p>
+                {renderCardContent(item, isGreen)}
               </motion.button>
             );
           })}
         </AnimatePresence>
+        </div>
       </div>
 
       {/* Controls */}
-      <div className="flex items-center gap-[1.1111cqw]" style={{ transform: "translateY(-1.6667cqw)" }}>
+      <div className="flex items-center gap-[1.1111cqw]">
         <motion.button
           whileHover={{ scale: 1.08 }}
           whileTap={{ scale: 0.95 }}

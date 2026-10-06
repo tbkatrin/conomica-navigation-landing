@@ -1,81 +1,76 @@
 "use client";
 
 /**
- * Cross-promo showcase right after Hero — per Figma node 218:2027's promo
- * grid (232:8617 = займы content, 232:8619 = цессии content, both updated
- * with the new "Perspective N · 3d" laptop mockups). Per-element
+ * Cross-promo showcase right after Hero — per Figma node 232:8618
+ * (232:8617 = займы content, 232:8619 = цессии content). Per-element
  * edge-exit/edge-enter mechanic (see ui/edge-slide), and "Платформа" is
  * accented green in the headline.
  *
- * The two variants' own mockup boxes differ slightly in size (643×512.462
- * for займы vs 669×533.183 for цессии — a real difference between the two
- * source screenshots' perspective, not a mistake), so the macbook slot
- * uses `anchorB` to give each variant its own exact rest box while every
- * other slot shares one anchor.
+ * Each variant has a row of four info badges at the top-left (no mini logo
+ * any more), its own text-block position, and a MacBook mockup composited
+ * from the shared shell + that variant's dashboard screenshot (the same
+ * "Perspective N · 3d" cutouts the Hero product cards use). The two
+ * variants' mockup boxes differ slightly in size and position, so the
+ * macbook, badge-row and text-block slots each use `anchorB` to give every
+ * variant its own exact rest box.
  *
- * Fluid-scaling pass: the box itself used to be a fixed 1330×584px size;
- * it's now sized as `93.3989cqw` of the OUTER page wrapper (1330/1424 —
- * its own proportion of that wrapper at the 1440 reference, see
- * app/page.tsx) — no additional ceiling needed since that outer wrapper
- * already caps at 1600px itself, so this box's growth stops right along
- * with it. `aspectRatio` keeps its height locked to that fluid width
- * instead of a fixed 584px. The box itself then becomes a
- * *nested* `[container-type:inline-size]` context, so everything inside
- * it (logo/badge/headline/text/macbook positions, via the `CQW()` helper)
- * scales in `cqw` against *its own* rendered width — 1330px is this
- * file's own reference (see Footer.tsx's doc comment for the general
- * technique). Font-sizes use `clamp(floor, Pcqw, ceiling)`, tracking is in
- * `em`. ui/edge-slide.tsx's travel distance switched from a fixed px
- * frame size to `100cqw`/`100cqh` (one full box width/height, whatever
- * that currently renders as) — see that file's own doc comment.
+ * Fluid-scaling: the box is sized as `96.9388cqw` of the OUTER page wrapper
+ * (1330/1372 — its own proportion of that wrapper's Figma width, see
+ * app/page.tsx), with `aspectRatio` locking its height to that fluid
+ * width. The box is itself a nested `[container-type:size]` context, so
+ * everything inside (positions/sizes via the `CQW()` helper) scales in `cqw`
+ * against *its own* rendered width — 1330px is this file's own reference
+ * (see Footer.tsx's doc comment for the general technique). Font-sizes use
+ * `clamp(floor, Pcqw, ceiling)`, tracking is in `em`. ui/edge-slide.tsx's
+ * travel distance is `100cqw`/`100cqh` (one full box width/height).
  */
 
 import { useScroll, useTransform, useReducedMotion } from "motion/react";
-import { useRef, type ReactNode } from "react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 import Asset from "./Asset";
-import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaGxRegular, fontVelaMedium } from "./fonts";
+import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
 import { Slot } from "./ui/edge-slide";
 
 const CQW = (px: number) => `${px / 13.3}cqw`;
+
+// every badge in the top row shares one height (the tallest design badge)
+const BADGE_HEIGHT = 76;
+
+interface BadgeSpec {
+  icon: { src: string; w: number; h: number; box?: number };
+  text: string;
+  /** fixed text column width in px (text wraps inside it) */
+  textWidth?: number;
+  /** icon/text gap in px */
+  gap?: number;
+  /** horizontal padding in px */
+  px?: number;
+  width?: number;
+}
 
 interface MockupBox {
   left: number;
   top: number;
   width: number;
   height: number;
-  /** A single pre-composited screenshot straight out of Figma (shell +
-   * perspective-warped screen + notch already baked in as one PNG) — used
-   * instead of the shell+overlay compositing below whenever it's available,
-   * since it's pixel-exact by construction and sidesteps having to
-   * reproduce Figma's own perspective/skew math in CSS. */
-  fullImage?: string;
-  /** inset of the perspective-screen sub-box, as CSS inset percentages */
-  screenInset?: string;
-  /** the screen image's own position within that sub-box, as percentages */
-  screenRect?: { left: string; top: string; width: string; height: string };
-  /** slight tilt on the screen image itself, matching the source photo's own perspective, in degrees */
-  screenRotate?: number;
-  /** Figma specifies this per mockup — some export with no object-fit class
-   * (defaults to "fill", i.e. stretch to the box) and some explicitly set
-   * "object-cover" (preserve aspect, crop). Must match the source exactly,
-   * not assumed uniform across mockups. */
-  screenFit?: "fill" | "cover";
-  screen?: string;
+  /** extra inset wrapping shell+screen together (only the цессии mockup) */
+  groupInset?: string;
+  screenInset: string;
+  screenRadius?: number;
+  screenRect: { left: string; top: string; width: string; height: string };
+  notchInset: string;
+  screen: string;
 }
 
 interface Variant {
   productName: string;
   headline: ReactNode;
-  badge: { icon: string; iconClassName: string; lines: [string, string] };
+  badges: BadgeSpec[];
+  badgeRow: { left: number; top: number };
+  textBlock: { left: number; top: number; width: number };
   mockup: MockupBox;
   ctaHref?: string;
 }
-
-// Shared slot geometry for the pieces both variants render at the same
-// size — only the macbook (see anchorB below) differs per variant.
-const LOGO_POS = { left: CQW(80), top: CQW(56) };
-const BADGE_POS = { left: CQW(1047), top: CQW(47) };
-const TEXT_BLOCK = { left: CQW(70), top: CQW(320), width: CQW(360) };
 
 const VARIANTS: [Variant, Variant] = [
   {
@@ -86,71 +81,100 @@ const VARIANTS: [Variant, Variant] = [
         для бизнеса, обеспеченные текущей дебиторской задолженностью
       </>
     ),
-    badge: {
-      icon: "/products-promo/bank-icon.svg",
-      iconClassName: "h-[2.2556cqw] w-[2.4812cqw]",
-      lines: ["Лицензия", "Центробанка РФ"],
-    },
+    badgeRow: { left: 57, top: 52 },
+    badges: [
+      { icon: { src: "/products-promo/bank-icon.svg", w: 33, h: 30.6291 }, text: "Лицензия \nЦентробанка РФ" },
+      { icon: { src: "/products-promo/badge-unique-solutions.svg", w: 44, h: 44 }, text: "Уникальные продуктовые решения", textWidth: 187 },
+      { icon: { src: "/products-promo/badge-experience.svg", w: 29.25, h: 32.3333, box: 37 }, text: "Более 9 лет \nопыт работы  команды", gap: 24 },
+      { icon: { src: "/products-promo/badge-it-solution.svg", w: 38, h: 35 }, text: "Собственное безопасное \nIT-решение", width: 303 },
+    ],
+    textBlock: { left: 76, top: 335, width: 397 },
     ctaHref: "https://conomica-finance.ru/",
     mockup: {
-      left: 750,
-      top: 157,
+      left: 749,
+      top: 177,
       width: 643,
       height: 512.462,
-      fullImage: "/products-promo/macbook-zaimy-full.png",
+      screenInset: "17.37% 13.22% 31.31% 31.42%",
+      screenRadius: 36,
+      screenRect: { left: "4.29%", top: "3.88%", width: "92.41%", height: "91.46%" },
+      notchInset: "18.57% 37.37% 79.37% 55.75%",
+      screen: "/products-promo/dashboard-money.png",
     },
   },
   {
     productName: "цессии",
     headline: (
       <>
-        <span className="text-[#00703E]">Платформа</span> управления сделками
-        по приобретению и взысканию истекшей дебиторской задолжености
+        <span className="text-[#00703E]">Платформа</span> управления
+        <br />
+        сделками по приобретению и взысканию истекшей
+        <br />
+        дебиторской задолжености
       </>
     ),
-    badge: {
-      icon: "/hero/badge-skolkovo.svg",
-      iconClassName: "h-[3.2331cqw] w-[3.2094cqw]",
-      lines: ["Резидент", "Сколково"],
-    },
+    badgeRow: { left: 64, top: 61 },
+    badges: [
+      { icon: { src: "/hero/badge-skolkovo.svg", w: 42.6846, h: 43 }, text: "Резидент \nСколково", px: 29 },
+      { icon: { src: "/products-promo/badge-valuation.svg", w: 41.4999, h: 41.5, box: 40 }, text: "Более 9 лет опыт в оценке и взыскании", textWidth: 229 - 64, gap: 24 },
+      { icon: { src: "/products-promo/badge-industry-leader.svg", w: 48, h: 48 }, text: "Лидер отрасли в сегменте", textWidth: 123 },
+      { icon: { src: "/products-promo/badge-crm.svg", w: 42, h: 42 }, text: "Собственная уникальная CRM-система", textWidth: 208 },
+    ],
+    textBlock: { left: 64, top: 308, width: 320 },
     ctaHref: "https://cabinet.conomica.space/",
     mockup: {
-      left: 731,
-      top: 158,
+      left: 732,
+      top: 145,
       width: 669,
       height: 533.183,
+      groupInset: "2.06% -0.45% -2.06% 0.45%",
       screenInset: "15.57% 10.61% 30.61% 32.29%",
       screenRect: { left: "2.84%", top: "7.65%", width: "89.41%", height: "87%" },
-      screen: "/products-promo/perspective-cessii.png",
+      notchInset: "20.63% 36.92% 77.31% 56.2%",
+      screen: "/products-promo/dashboard-overview.png",
     },
   },
 ];
 
-function anchorFor(mockup: MockupBox) {
+function anchorFor(mockup: MockupBox): CSSProperties {
   return { left: CQW(mockup.left), top: CQW(mockup.top), width: CQW(mockup.width), height: CQW(mockup.height) };
 }
 
-function InfoBadge({ icon, iconClassName, lines }: Variant["badge"]) {
+function Badge({ spec }: { spec: BadgeSpec }) {
+  const { icon } = spec;
+  const iconBox = icon.box ?? null;
   return (
-    <div className="flex items-center gap-[1.8045cqw] rounded-[8px] bg-white px-[2.1053cqw] py-[1.203cqw] drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]">
-      <Asset src={icon} alt="" className={iconClassName} />
-      <p className={`whitespace-nowrap text-[clamp(11px,1.3534cqw,20px)] leading-none tracking-[-0.04em] text-[#191919] ${fontVelaMedium}`}>
-        {lines[0]}
-        <br />
-        {lines[1]}
+    <div
+      className="flex items-center justify-center rounded-[8px] bg-white drop-shadow-[4px_4px_17px_rgba(0,0,0,0.11)]"
+      style={{
+        height: CQW(BADGE_HEIGHT),
+        width: spec.width ? CQW(spec.width) : undefined,
+        padding: `${CQW(16)} ${CQW(spec.px ?? 28)}`,
+        gap: CQW(spec.gap ?? 16),
+      }}
+    >
+      <div
+        className="flex shrink-0 items-center justify-center"
+        style={iconBox ? { width: CQW(iconBox), height: CQW(iconBox) } : undefined}
+      >
+        <Asset src={icon.src} alt="" className="shrink-0" style={{ width: CQW(icon.w), height: CQW(icon.h) }} />
+      </div>
+      <p
+        className={`whitespace-pre-line text-[clamp(11px,1.3534cqw,20px)] leading-none tracking-[-0.04em] text-[#191919] ${fontVelaMedium}`}
+        style={{ width: spec.textWidth ? CQW(spec.textWidth) : undefined, whiteSpace: spec.textWidth ? undefined : "pre" }}
+      >
+        {spec.text}
       </p>
     </div>
   );
 }
 
-function MiniLogo({ product }: { product: string }) {
+function BadgeRow({ badges }: { badges: BadgeSpec[] }) {
   return (
-    <div className="flex items-center gap-[1.203cqw]">
-      <Asset src="/hero/sis-icon.svg" alt="" className="h-[2.5778cqw] w-[2.2874cqw]" />
-      <div className="flex flex-col items-start gap-[0.1504cqw]">
-        <Asset src="/hero/product-wordmark.svg" alt="Conomica" className="h-[1.8916cqw] w-[11.07cqw]" />
-        <p className={`text-[clamp(11px,1.203cqw,17.78px)] text-[#161616] ${fontVelaGxRegular}`}>{product}</p>
-      </div>
+    <div className="flex items-center" style={{ gap: CQW(16) }}>
+      {badges.map((b) => (
+        <Badge key={b.text} spec={b} />
+      ))}
     </div>
   );
 }
@@ -167,7 +191,7 @@ function HeadlineCenter({ productName }: { productName: string }) {
 function TextBlock({ headline, ctaHref }: { headline: ReactNode; ctaHref?: string }) {
   const CtaTag = ctaHref ? "a" : "button";
   return (
-    <div className="flex flex-col items-start gap-[0.7519cqw]" style={{ width: TEXT_BLOCK.width }}>
+    <div className="flex w-full flex-col items-start gap-[0.7519cqw]">
       <p className={`text-[clamp(11px,2.1053cqw,31.11px)] leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}>
         {headline}
       </p>
@@ -183,38 +207,40 @@ function TextBlock({ headline, ctaHref }: { headline: ReactNode; ctaHref?: strin
   );
 }
 
-/** Macbook shell (flipped horizontally) + a perspective screenshot fitted
+/** Macbook shell (flipped horizontally) + a dashboard screenshot fitted
  * into the pre-warped "Perspective N · 3d" cutout, exactly per Figma's own
  * percentage insets — those percentages are already relative to this same
- * box, so no manual px conversion is needed. When `fullImage` is set, skip
- * all that compositing and just render Figma's own flattened screenshot. */
+ * box, so no manual px conversion is needed. */
 function Macbook({ mockup }: { mockup: MockupBox }) {
-  if (mockup.fullImage) {
-    return <Asset src={mockup.fullImage} alt="" className="absolute inset-0 h-full w-full" />;
-  }
+  const body = (
+    <>
+      <Asset src="/products-promo/macbook.png" alt="" className="absolute inset-0 h-full w-full -scale-x-100" />
+      <div
+        className="absolute overflow-hidden"
+        style={{ inset: mockup.screenInset, borderRadius: mockup.screenRadius ? CQW(mockup.screenRadius) : undefined }}
+      >
+        <Asset src={mockup.screen} alt="" fit="fill" className="absolute" style={mockup.screenRect} />
+      </div>
+    </>
+  );
 
   return (
     <div className="relative h-full w-full">
-      <Asset src="/products-promo/macbook.png" alt="" className="absolute inset-0 h-full w-full -scale-x-100" />
-      <div className="absolute overflow-hidden" style={{ inset: mockup.screenInset }}>
-        <Asset
-          src={mockup.screen!}
-          alt=""
-          fit={mockup.screenFit ?? "fill"}
-          className="absolute"
-          style={{
-            left: mockup.screenRect!.left,
-            top: mockup.screenRect!.top,
-            width: mockup.screenRect!.width,
-            height: mockup.screenRect!.height,
-            rotate: mockup.screenRotate ? `${mockup.screenRotate}deg` : undefined,
-          }}
-        />
-      </div>
+      {mockup.groupInset ? (
+        <div className="absolute" style={{ inset: mockup.groupInset }}>
+          {body}
+        </div>
+      ) : (
+        body
+      )}
       {/* webcam notch on the screen's top bezel */}
       <div
-        className="absolute rounded-bl-[7px] rounded-br-[6px] bg-black"
-        style={{ inset: "18.57% 37.37% 79.37% 55.75%" }}
+        className="absolute bg-black"
+        style={{
+          inset: mockup.notchInset,
+          borderBottomLeftRadius: CQW(7),
+          borderBottomRightRadius: CQW(6),
+        }}
       />
     </div>
   );
@@ -237,6 +263,14 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
   const rawProgress = useTransform(scrollYProgress, [0.15, 0.85], [0, 1]);
   const progress = useTransform(rawProgress, (p) => (reduce ? 1 : p));
 
+  const [a, b] = VARIANTS;
+  const badgeAnchor = (v: Variant): CSSProperties => ({ left: CQW(v.badgeRow.left), top: CQW(v.badgeRow.top) });
+  const textAnchor = (v: Variant): CSSProperties => ({
+    left: CQW(v.textBlock.left),
+    top: CQW(v.textBlock.top),
+    width: CQW(v.textBlock.width),
+  });
+
   return (
     <section ref={wrapRef} className="relative w-full" style={{ height: `${scrollLength}vh` }}>
       <div
@@ -253,21 +287,15 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
       >
         <div
           className="relative mx-auto max-w-full overflow-hidden rounded-[8px] bg-white [container-type:size]"
-          style={{ width: "93.3989cqw", aspectRatio: "1330 / 584" }}
+          style={{ width: "96.9388cqw", aspectRatio: "1330 / 584" }}
         >
           <Slot
             direction="up"
-            anchor={LOGO_POS}
+            anchor={badgeAnchor(a)}
+            anchorB={badgeAnchor(b)}
             progress={progress}
             variants={VARIANTS}
-            render={(v) => <MiniLogo product={v.productName} />}
-          />
-          <Slot
-            direction="right"
-            anchor={BADGE_POS}
-            progress={progress}
-            variants={VARIANTS}
-            render={(v) => <InfoBadge {...v.badge} />}
+            render={(v) => <BadgeRow badges={v.badges} />}
           />
           <Slot
             direction="down"
@@ -282,15 +310,16 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
           />
           <Slot
             direction="left"
-            anchor={TEXT_BLOCK}
+            anchor={textAnchor(a)}
+            anchorB={textAnchor(b)}
             progress={progress}
             variants={VARIANTS}
             render={(v) => <TextBlock headline={v.headline} ctaHref={v.ctaHref} />}
           />
           <Slot
             direction="right"
-            anchor={anchorFor(VARIANTS[0].mockup)}
-            anchorB={anchorFor(VARIANTS[1].mockup)}
+            anchor={anchorFor(a.mockup)}
+            anchorB={anchorFor(b.mockup)}
             progress={progress}
             variants={VARIANTS}
             render={(v) => <Macbook mockup={v.mockup} />}

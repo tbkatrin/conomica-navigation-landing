@@ -28,6 +28,17 @@ precision highp float;
 uniform vec2 uRes;
 uniform float uTime;
 uniform vec3 uBg, uC1, uC2, uC3;
+// Rectangles (center xy, half-size zw, in canvas pixels) the ribbons should
+// stay clear of — the hero logo and headline — and the width of the soft
+// falloff around them.
+uniform vec4 uAvoid0, uAvoid1;
+uniform float uFeather;
+
+float avoid(vec4 a) {
+  vec2 d = max(abs(gl_FragCoord.xy - a.xy) - a.zw, 0.0);
+  float t = smoothstep(0.0, uFeather, length(d));
+  return t * t * (3.0 - 2.0 * t);
+}
 
 float hash(vec2 p) { return fract(sin(dot(p, vec2(127.1, 311.7))) * 43758.5453); }
 
@@ -68,15 +79,18 @@ void main() {
   vec2 p = (uv - 0.5) * vec2(aspect, 1.0);
   float t = uTime;
 
-  // Fades ribbons out toward the horizontal center, where the centered
-  // headline sits, so the waves don't cut through the text.
-  float centerFade = smoothstep(0.0, 0.38, abs(p.x));
+  // The ribbon pattern is shifted left so the arcs sit in the middle of
+  // the composition instead of on the right-aligned headline, and faded
+  // out toward the right edge where the headline is.
+  vec2 pw = p + vec2(0.25, 0.0);
+  float rightFade = (1.0 - smoothstep(-0.05, 0.22, p.x))
+    * mix(0.03, 1.0, avoid(uAvoid0) * avoid(uAvoid1));
 
   vec3 col = uBg;
   vec4 r;
-  r = ribbon(p, t,  0.55, -0.25, 0.075, 2.2, 0.15, 2.0, 0.0, 1.0);  col = mix(col, r.rgb, min(1.0, r.a * 1.15 * centerFade));
-  r = ribbon(p, t,  0.45,  0.30, 0.09, 1.8, 0.18, 1.6, 2.1, 0.8);  col = mix(col, r.rgb, min(1.0, r.a * 1.05 * centerFade));
-  r = ribbon(p, t,  0.70,  0.05, 0.06, 2.8, 0.11, 2.6, 4.3, 1.2);  col = mix(col, r.rgb, r.a * 0.95 * centerFade);
+  r = ribbon(pw, t,  0.55, -0.25, 0.075, 2.2, 0.15, 2.0, 0.0, 1.0);  col = mix(col, r.rgb, min(1.0, r.a * 1.15 * rightFade));
+  r = ribbon(pw, t,  0.45,  0.30, 0.09, 1.8, 0.18, 1.6, 2.1, 0.8);  col = mix(col, r.rgb, min(1.0, r.a * 1.05 * rightFade));
+  r = ribbon(pw, t,  0.70,  0.05, 0.06, 2.8, 0.11, 2.6, 4.3, 1.2);  col = mix(col, r.rgb, r.a * 0.95 * rightFade);
 
   col += (hash(gl_FragCoord.xy + fract(t) * 100.0) - 0.5) * 0.03;
   gl_FragColor = vec4(col, 1.0);
@@ -140,6 +154,12 @@ export default function HeroWaveBackground({ className }: { className?: string }
     gl.uniform3fv(U("uC2"), hexToRgb(PAL.c2));
     gl.uniform3fv(U("uC3"), hexToRgb(PAL.c3));
 
+    const uAvoid = [U("uAvoid0"), U("uAvoid1")];
+    const uFeather = U("uFeather");
+    const AVOID_IDS = ["hero-logo", "hero-headline"];
+    const AVOID_MARGIN = 12; // css px kept clear around each element
+    const AVOID_FEATHER = 300; // css px of soft falloff beyond the margin
+
     const SCALE = 0.75; // waves are soft/blurred — full resolution buys nothing
     const FPS = 30;
     let time = 0;
@@ -147,7 +167,50 @@ export default function HeroWaveBackground({ className }: { className?: string }
     let raf = 0;
     let visible = true;
 
+    // Measured from the DOM on every draw so it follows layout changes and
+    // the canvas's own scroll parallax (the canvas rect already includes
+    // its translate).
+    // Tight bounds of the actual glyph runs inside an element (its box can
+    // be much wider than the text, e.g. a right-aligned headline).
+    function textBounds(el: HTMLElement): DOMRect {
+      const box = el.getBoundingClientRect();
+      const range = document.createRange();
+      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
+      let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
+      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
+        if (!n.textContent?.trim()) continue;
+        range.selectNodeContents(n);
+        for (const q of Array.from(range.getClientRects())) {
+          l = Math.min(l, q.left); t = Math.min(t, q.top);
+          r = Math.max(r, q.right); b = Math.max(b, q.bottom);
+        }
+      }
+      return r > l ? new DOMRect(l, t, r - l, b - t) : box;
+    }
+    function updateAvoid() {
+      const cr = canvas!.getBoundingClientRect();
+      const s = canvas!.width / Math.max(1, cr.width);
+      AVOID_IDS.forEach((id, i) => {
+        const el = document.getElementById(id);
+        if (!el) {
+          gl!.uniform4f(uAvoid[i], -1e5, -1e5, 0, 0);
+          return;
+        }
+        const r = id === "hero-headline" ? textBounds(el) : el.getBoundingClientRect();
+        const cx = ((r.left + r.right) / 2 - cr.left) * s;
+        const cyTop = ((r.top + r.bottom) / 2 - cr.top) * s;
+        gl!.uniform4f(
+          uAvoid[i],
+          cx,
+          canvas!.height - cyTop,
+          (r.width / 2 + AVOID_MARGIN) * s,
+          (r.height / 2 + AVOID_MARGIN) * s,
+        );
+      });
+      gl!.uniform1f(uFeather, AVOID_FEATHER * s);
+    }
     function draw() {
+      updateAvoid();
       gl!.viewport(0, 0, canvas!.width, canvas!.height);
       gl!.uniform2f(uRes, canvas!.width, canvas!.height);
       gl!.uniform1f(uTime, time);

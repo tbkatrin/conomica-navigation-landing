@@ -3,7 +3,7 @@
 import { useRef, type ReactNode } from "react";
 import { motion, useScroll, useTransform } from "motion/react";
 import { DecorativeCircleMark } from "./DecorativeCircle";
-import { fontVelaBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
+import { fontVelaBold, fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "./fonts";
 
 /**
  * "Conomica в цифрах" — per Figma node 329:1669. Reproduced with the
@@ -46,20 +46,15 @@ interface Stat {
   top: number;
 }
 
+// Copy and arrangement per Figma node 432:2275 (frame x offset by -56 so the
+// first column keeps its existing left edge in this section).
 const STATS: Stat[] = [
-  {
-    value: "7.7",
-    unit: "млрд",
-    description: "было взыскано по приобретенному портфелю требований",
-    left: 149,
-    top: 128,
-  },
   {
     prefix: "более",
     value: "700",
     unit: "сделок",
-    description: "активный портфель, находящийся в текущем взыскании",
-    left: 407,
+    description: "по приобретению дебиторской задолженности",
+    left: 149,
     top: 128,
   },
   {
@@ -70,13 +65,20 @@ const STATS: Stat[] = [
         возвращено бизнесу <br />в оборот с помощью продажи дебиторской задолженности
       </>
     ),
-    left: 265,
-    top: 326,
+    left: 408,
+    top: 128,
+  },
+  {
+    value: "7.7",
+    unit: "млрд",
+    description: "было взыскано по приобретенному портфелю требований",
+    left: 296,
+    top: 328,
   },
   {
     value: "1.5",
     unit: "млрд",
-    description: "заработали инвесторы после возврата инвестиций и оплаты комиссий",
+    description: "заработали наши клиенты на сделках с долговыми требованиями",
     left: 545,
     top: 326,
   },
@@ -94,8 +96,7 @@ const STATS: Stat[] = [
     description: (
       <>
         участвовали в <br />
-        финансировании сделок <br />
-        на платформах
+        финансировании сделок с долговыми требованиями
       </>
     ),
     left: 707,
@@ -161,6 +162,13 @@ export default function StatsShowcase() {
   return (
     <section className="relative z-10 mx-auto w-full max-w-[1600px] overflow-hidden bg-[#F5F5F5] [container-type:inline-size]">
       <div className="relative" style={{ minHeight: CQW(780), paddingBottom: CQW(72) }}>
+        <p
+          className={`absolute whitespace-nowrap text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
+          style={{ left: CQW(805), top: CQW(135) }}
+        >
+          Кономика в цифрах
+        </p>
+
         {STATS.map((stat, i) => (
           <StatBlock key={i} stat={stat} index={i} />
         ))}
