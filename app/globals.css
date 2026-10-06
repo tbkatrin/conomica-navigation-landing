@@ -22,3 +22,28 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
+
+/* Hero wave background (components/Hero.tsx) — slow organic sway, like a
+   stem moving in a breeze. transform-origin sits left-of-center since the
+   ribbon reads as anchored off the left edge of the viewport. */
+.hero-wave {
+  transform-origin: 20% 50%;
+  animation: hero-wave-sway 7s ease-in-out infinite;
+  will-change: transform;
+}
+
+@keyframes hero-wave-sway {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-32px) rotate(2.2deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wave {
+    animation: none;
+  }
+}

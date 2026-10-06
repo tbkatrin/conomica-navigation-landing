@@ -61,12 +61,15 @@ export function DecorativeCircleMark({
   travel = "bidirectional",
   tone = "brand",
   cone = true,
+  coneScale = 1,
 }: {
   className?: string;
   size?: number | string;
   travel?: "bidirectional" | "sequential";
   tone?: "brand" | "muted";
   cone?: boolean;
+  /** multiplier for the centred cone's size (1 = Figma's size) */
+  coneScale?: number;
 }) {
   const dotRadius = DOT_RADIUS;
   const center = SIZE / 2;
@@ -162,7 +165,7 @@ export function DecorativeCircleMark({
           src={isMuted ? "/hero/cone-grey.svg" : "/hero/cone.svg"}
           alt=""
           className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-          style={{ height: "23.3051%", width: "20.7627%" }}
+          style={{ height: `${23.3051 * coneScale}%`, width: `${20.7627 * coneScale}%` }}
         />
       )}
     </div>

@@ -38,20 +38,11 @@ const RADIUS_Y_TO_X_RATIO = 130 / 340;
 const CARD_BASE =
   "relative flex flex-col items-start justify-start gap-[1.3889cqw] rounded-[24px] px-[2.2222cqw] py-[2.2222cqw]";
 
-function renderCardContent(item: CarouselItem, isGreen: boolean) {
+function renderCardContent(item: CarouselItem) {
   return (
     <>
-      <span
-        className={cn(
-          "flex h-[3.8889cqw] w-[3.8889cqw] shrink-0 items-center justify-center rounded-[16px] transition-colors duration-500",
-          isGreen ? "bg-white" : "bg-[#00703e]",
-        )}
-      >
-        <Asset
-          src={isGreen ? "/hero/cone.svg" : "/footer/cone-sis-white.svg"}
-          alt=""
-          className="h-[1.9444cqw] w-[1.7471cqw]"
-        />
+      <span className="flex h-[3.8889cqw] w-[3.8889cqw] shrink-0 items-center justify-center rounded-[16px] bg-white">
+        <Asset src="/hero/cone.svg" alt="" className="h-[1.9444cqw] w-[1.7471cqw]" />
       </span>
       {item.tag && (
         <span
@@ -62,8 +53,7 @@ function renderCardContent(item: CarouselItem, isGreen: boolean) {
       )}
       <h3
         className={cn(
-          "w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.02em] transition-colors duration-500",
-          isGreen ? "text-white" : "text-[#161616]",
+          "w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.02em] text-[#161616]",
           fontVelaGxBold,
         )}
       >
@@ -71,8 +61,7 @@ function renderCardContent(item: CarouselItem, isGreen: boolean) {
       </h3>
       <p
         className={cn(
-          "w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] transition-colors duration-500",
-          isGreen ? "text-white/85" : "text-[#626262]",
+          "w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] text-[#626262]",
           fontVelaMedium,
         )}
       >
@@ -240,7 +229,7 @@ export function CircularCarousel({
               aria-hidden
               className={`pointer-events-none invisible w-1/3 justify-self-center [grid-area:1/1] ${CARD_BASE}`}
             >
-              {renderCardContent(item, false)}
+              {renderCardContent(item)}
             </div>
           ))}
         <AnimatePresence mode="popLayout">
@@ -256,9 +245,6 @@ export function CircularCarousel({
             if (!pos) return null;
 
             const isActive = i === activeIndex || i === (activeIndex + 1) % total;
-            // Of the two active cards, only the left one is green; the
-            // right one stays light (same as every inactive card).
-            const isGreen = i === activeIndex;
 
             return (
               <motion.button
@@ -282,13 +268,12 @@ export function CircularCarousel({
                 aria-selected={isActive}
                 role="option"
                 className={cn(
-                  "w-1/3 cursor-pointer self-stretch justify-self-center text-left shadow-[4px_4px_34px_rgba(0,0,0,0.11)] transition-colors duration-500 [grid-area:1/1]",
+                  "w-1/3 cursor-pointer self-stretch justify-self-center bg-[#f5f5f5] text-left shadow-[4px_4px_34px_rgba(0,0,0,0.11)] [grid-area:1/1]",
                   CARD_BASE,
-                  isGreen ? "bg-[#00703e]" : "bg-white",
                 )}
                 style={{ transformOrigin: "center center" }}
               >
-                {renderCardContent(item, isGreen)}
+                {renderCardContent(item)}
               </motion.button>
             );
           })}

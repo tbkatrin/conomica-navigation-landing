@@ -77,20 +77,25 @@ void main() {
   // instead of bunching into one side on an ultra-wide (e.g. 27"+) monitor.
   float aspect = min(uRes.x / uRes.y, 2.0);
   vec2 p = (uv - 0.5) * vec2(aspect, 1.0);
-  float t = uTime;
+  float t = uTime * 1.35;
 
-  // The ribbon pattern is shifted left so the arcs sit in the middle of
-  // the composition instead of on the right-aligned headline, and faded
-  // out toward the right edge where the headline is.
-  vec2 pw = p + vec2(0.25, 0.0);
-  float rightFade = (1.0 - smoothstep(-0.05, 0.22, p.x))
-    * mix(0.03, 1.0, avoid(uAvoid0) * avoid(uAvoid1));
+  // Two groups of three ribbons: one pushed toward the left side, one
+  // mirrored toward the right, each with its own angles/seeds so the two
+  // sides don't read as a symmetric copy. They stay softly clear of the
+  // logo and the centred headline block (see uAvoid*), but never vanish
+  // completely behind them.
+  vec2 pl = p + vec2(0.30, 0.0);
+  vec2 pr = vec2(-p.x, p.y) + vec2(0.30, 0.0);
+  float keep = mix(0.18, 1.0, avoid(uAvoid0) * avoid(uAvoid1));
 
   vec3 col = uBg;
   vec4 r;
-  r = ribbon(pw, t,  0.55, -0.25, 0.075, 2.2, 0.15, 2.0, 0.0, 1.0);  col = mix(col, r.rgb, min(1.0, r.a * 1.15 * rightFade));
-  r = ribbon(pw, t,  0.45,  0.30, 0.09, 1.8, 0.18, 1.6, 2.1, 0.8);  col = mix(col, r.rgb, min(1.0, r.a * 1.05 * rightFade));
-  r = ribbon(pw, t,  0.70,  0.05, 0.06, 2.8, 0.11, 2.6, 4.3, 1.2);  col = mix(col, r.rgb, r.a * 0.95 * rightFade);
+  r = ribbon(pl, t,  0.55, -0.25, 0.075, 2.2, 0.15, 2.0, 0.0, 1.0);  col = mix(col, r.rgb, min(1.0, r.a * 1.2 * keep));
+  r = ribbon(pl, t,  0.45,  0.30, 0.09,  1.8, 0.18, 1.6, 2.1, 0.8);  col = mix(col, r.rgb, min(1.0, r.a * 1.1 * keep));
+  r = ribbon(pl, t,  0.70,  0.05, 0.06,  2.8, 0.11, 2.6, 4.3, 1.2);  col = mix(col, r.rgb, min(1.0, r.a * 1.0 * keep));
+  r = ribbon(pr, t,  0.50, -0.20, 0.08,  2.0, 0.16, 1.9, 5.3, 0.9);  col = mix(col, r.rgb, min(1.0, r.a * 1.2 * keep));
+  r = ribbon(pr, t,  0.62,  0.22, 0.095, 1.7, 0.17, 1.7, 7.7, 1.1);  col = mix(col, r.rgb, min(1.0, r.a * 1.1 * keep));
+  r = ribbon(pr, t,  0.40,  0.02, 0.065, 2.6, 0.12, 2.4, 9.1, 1.3);  col = mix(col, r.rgb, min(1.0, r.a * 1.0 * keep));
 
   col += (hash(gl_FragCoord.xy + fract(t) * 100.0) - 0.5) * 0.03;
   gl_FragColor = vec4(col, 1.0);
@@ -99,9 +104,10 @@ void main() {
 
 const VERT_SRC = "attribute vec2 p; void main(){ gl_Position = vec4(p, 0., 1.); }";
 
-// Ribbon greens from the reference; background is this site's own page
+// Ribbons are the soft mint #B4EFBF (the file's "green light status"), with a
+// slightly lighter edge tint; background is this site's own page
 // grey instead of the reference's own #d8d8d8.
-const PAL = { bg: "#F5F5F5", c1: "#005c33", c2: "#00873f", c3: "#7fcf98" };
+const PAL = { bg: "#F5F5F5", c1: "#B4EFBF", c2: "#B4EFBF", c3: "#D2F6D8" };
 
 function hexToRgb(hex: string): [number, number, number] {
   return [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255) as [number, number, number];
@@ -158,7 +164,7 @@ export default function HeroWaveBackground({ className }: { className?: string }
     const uFeather = U("uFeather");
     const AVOID_IDS = ["hero-logo", "hero-headline"];
     const AVOID_MARGIN = 12; // css px kept clear around each element
-    const AVOID_FEATHER = 300; // css px of soft falloff beyond the margin
+    const AVOID_FEATHER = 220; // css px of soft falloff beyond the margin
 
     const SCALE = 0.75; // waves are soft/blurred — full resolution buys nothing
     const FPS = 30;
@@ -170,23 +176,6 @@ export default function HeroWaveBackground({ className }: { className?: string }
     // Measured from the DOM on every draw so it follows layout changes and
     // the canvas's own scroll parallax (the canvas rect already includes
     // its translate).
-    // Tight bounds of the actual glyph runs inside an element (its box can
-    // be much wider than the text, e.g. a right-aligned headline).
-    function textBounds(el: HTMLElement): DOMRect {
-      const box = el.getBoundingClientRect();
-      const range = document.createRange();
-      const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT);
-      let l = Infinity, t = Infinity, r = -Infinity, b = -Infinity;
-      for (let n = walker.nextNode(); n; n = walker.nextNode()) {
-        if (!n.textContent?.trim()) continue;
-        range.selectNodeContents(n);
-        for (const q of Array.from(range.getClientRects())) {
-          l = Math.min(l, q.left); t = Math.min(t, q.top);
-          r = Math.max(r, q.right); b = Math.max(b, q.bottom);
-        }
-      }
-      return r > l ? new DOMRect(l, t, r - l, b - t) : box;
-    }
     function updateAvoid() {
       const cr = canvas!.getBoundingClientRect();
       const s = canvas!.width / Math.max(1, cr.width);
@@ -196,7 +185,7 @@ export default function HeroWaveBackground({ className }: { className?: string }
           gl!.uniform4f(uAvoid[i], -1e5, -1e5, 0, 0);
           return;
         }
-        const r = id === "hero-headline" ? textBounds(el) : el.getBoundingClientRect();
+        const r = el.getBoundingClientRect();
         const cx = ((r.left + r.right) / 2 - cr.left) * s;
         const cyTop = ((r.top + r.bottom) / 2 - cr.top) * s;
         gl!.uniform4f(

@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import Asset from "./Asset";
 import { fontVelaBold, fontVelaGxBold, fontVelaMedium } from "./fonts";
 
 /**
@@ -15,6 +16,31 @@ import { fontVelaBold, fontVelaGxBold, fontVelaMedium } from "./fonts";
  */
 
 const CQ = (px: number) => `${(px / 13.72).toFixed(4)}cqw`;
+
+/** Thin grey ring with six grey dots on it, rotated -61.35deg as in Figma.
+ * `size` is the whole mark's box (ring diameter + one dot), `cx`/`cy` its
+ * centre — all in px of the card's 1372px Figma width. */
+function RingMark({ cx, cy, size }: { cx: number; cy: number; size: number }) {
+  const DOT_R = 1.284; // dot radius, % of the box (12.37px dot in a 481.6px mark)
+  const R = 50 - DOT_R;
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 100 100"
+      fill="none"
+      className="pointer-events-none absolute"
+      style={{ left: CQ(cx - size / 2), top: CQ(cy - size / 2), width: CQ(size), height: CQ(size) }}
+    >
+      <g transform="rotate(-61.35 50 50)">
+        <circle cx={50} cy={50} r={R} stroke="#D8D8D8" strokeWidth={1} vectorEffect="non-scaling-stroke" />
+        {Array.from({ length: 6 }, (_, i) => {
+          const a = ((-90 + 60 * i) * Math.PI) / 180;
+          return <circle key={i} cx={50 + R * Math.cos(a)} cy={50 + R * Math.sin(a)} r={DOT_R} fill="#D8D8D8" />;
+        })}
+      </g>
+    </svg>
+  );
+}
 
 function StatRow({
   height,
@@ -141,8 +167,19 @@ function SolutionCard({
 export default function Offer() {
   return (
     <section className="relative z-10 mx-auto w-full max-w-[1600px] overflow-hidden rounded-[24px] bg-white [container-type:inline-size]">
+      {/* Grey ring-with-dots shapes behind the content (Figma groups
+          468:2659 / 468:2658), both rotated -61.35deg and partly clipped by
+          the card's edge; the right one carries the grey cone. */}
+      <RingMark cx={107.8} cy={492.75} size={481.6} />
+      <RingMark cx={1326.84} cy={190.5} size={315.67} />
+      <Asset
+        src="/hero/cone-grey.svg"
+        alt=""
+        className="pointer-events-none absolute"
+        style={{ left: CQ(1304.8), top: CQ(171.58), width: CQ(43.11), height: CQ(48.24) }}
+      />
       <div
-        className="flex w-full flex-col items-start"
+        className="relative flex w-full flex-col items-start"
         style={{ padding: `${CQ(120)} ${CQ(24)}`, gap: CQ(64) }}
       >
         <div className="w-full" style={{ padding: `0 ${CQ(32)}` }}>

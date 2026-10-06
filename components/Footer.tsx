@@ -5,7 +5,8 @@ import { fontVelaGxBold, fontVelaGxRegular, fontVelaMedium } from "./fonts";
 /**
  * Footer — per Figma node 307:1647 ("Footer desktop"), latest revision:
  * dark (#191919) background, three columns up top — "Компании группы" +
- * company list, a new "Контакты группы" column (email + phone), and the
+ * company list, a "Контакты группы" column (phone, email and the office
+ * address, each with a round icon), and the
  * social cards (QR/TenChat/VK) — then a divider and a single centred logo
  * lockup at the bottom (email/phone moved out of that bottom row into
  * their own column above).
@@ -31,6 +32,48 @@ const COMPANIES = [
   { name: "ООО «Технологии скоринга»", inn: "7728468083" },
   { name: "ООО «Про Фактор»", inn: "7709976250" },
 ];
+
+const ICON_CLASS = "size-[2.5cqw] shrink-0";
+const ICON_COLOR = "#F5F5F5";
+
+function PhoneIcon() {
+  return (
+    <svg viewBox="0 0 32 32" className={ICON_CLASS} fill="none" aria-hidden>
+      <circle cx="16" cy="16" r="15.5" stroke={ICON_COLOR} />
+      <path
+        d="M11.2915 8.47092V10.1742C11.2922 10.3323 11.2598 10.4888 11.1964 10.6337C11.1331 10.7786 11.0402 10.9086 10.9237 11.0155C10.8071 11.1224 10.6696 11.2038 10.5198 11.2544C10.37 11.3051 10.2113 11.3239 10.0538 11.3097C8.30675 11.1198 6.62857 10.5229 5.15412 9.56668C3.78233 8.69499 2.6193 7.53195 1.74761 6.16017C0.788094 4.67902 0.190969 2.99267 0.00460828 1.23775C-0.00957956 1.08075 0.00907928 0.922516 0.0593966 0.77312C0.109714 0.623724 0.190587 0.486442 0.296868 0.370014C0.403148 0.253586 0.532507 0.160564 0.676708 0.0968693C0.820909 0.0331746 0.976793 0.0002035 1.13444 5.50449e-05H2.83769C3.11322 -0.00265679 3.38034 0.0949143 3.58926 0.274582C3.79818 0.454249 3.93463 0.703754 3.9732 0.976589C4.04509 1.52167 4.17841 2.05687 4.37062 2.57197C4.44701 2.77518 4.46354 2.99603 4.41826 3.20835C4.37298 3.42067 4.26778 3.61556 4.11513 3.76993L3.39409 4.49097C4.20231 5.91237 5.37921 7.08926 6.8006 7.89749L7.52165 7.17644C7.67601 7.02379 7.8709 6.9186 8.08322 6.87332C8.29554 6.82803 8.51639 6.84457 8.7196 6.92095C9.23471 7.11317 9.76991 7.24649 10.315 7.31838C10.5908 7.35729 10.8427 7.4962 11.0227 7.70871C11.2028 7.92121 11.2984 8.19248 11.2915 8.47092Z"
+        fill={ICON_COLOR}
+        transform="translate(10.35,10.34)"
+      />
+    </svg>
+  );
+}
+
+function MailIcon() {
+  return (
+    <svg viewBox="0 0 32 32" className={ICON_CLASS} fill="none" aria-hidden>
+      <circle cx="16" cy="16" r="15.5" stroke={ICON_COLOR} />
+      <path
+        d="M0.753221 0L6.00773 4.1629L11.2545 0H0.753221ZM0 0.499857V6.85714H11.9991V0.503293L6.27398 5.04924C6.19816 5.10915 6.10436 5.14174 6.00773 5.14174C5.9111 5.14174 5.8173 5.10915 5.74148 5.04924L0.000858901 0.499857H0Z"
+        fill={ICON_COLOR}
+        transform="translate(10,12.57)"
+      />
+    </svg>
+  );
+}
+
+function PinIcon() {
+  return (
+    <svg viewBox="0 0 32 32" className={ICON_CLASS} fill="none" aria-hidden>
+      <circle cx="16" cy="16" r="15.5" stroke={ICON_COLOR} />
+      <path
+        d="M16 7.5c-3.6 0-6.5 2.8-6.5 6.4 0 4.6 6.5 10.6 6.5 10.6s6.5-6 6.5-10.6c0-3.6-2.9-6.4-6.5-6.4Z"
+        fill={ICON_COLOR}
+      />
+      <circle cx="16" cy="13.9" r="2.3" fill="#191919" />
+    </svg>
+  );
+}
 
 function SocialCard({ href, className, children }: { href: string; className?: string; children: ReactNode }) {
   return (
@@ -96,14 +139,24 @@ export default function Footer() {
               Контакты группы
             </p>
             <div
-              className={`flex flex-col items-start gap-[1.1111cqw] text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-white ${fontVelaMedium}`}
+              className={`flex flex-col items-start gap-[1.3889cqw] text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-white ${fontVelaMedium}`}
             >
-              <a href="mailto:info@conomica.ru" className="transition-colors hover:text-[#0EAD66]">
-                info@conomica.ru
-              </a>
-              <a href="tel:+74954775257" className="transition-colors hover:text-[#0EAD66]">
+              <a href="tel:+74954775257" className="flex items-center gap-[0.9722cqw] transition-colors hover:text-[#0EAD66]">
+                <PhoneIcon />
                 +7 (495) 477-52-57
               </a>
+              <a href="mailto:info@conomica.ru" className="flex items-center gap-[0.9722cqw] transition-colors hover:text-[#0EAD66]">
+                <MailIcon />
+                info@conomica.ru
+              </a>
+              <address className="flex items-center gap-[0.9722cqw] not-italic">
+                <PinIcon />
+                <span className="leading-[1.05]">
+                  г. Москва, ул. Бутлерова 17
+                  <br />
+                  Бизнес центр «NEO GEO»
+                </span>
+              </address>
             </div>
           </div>
 
