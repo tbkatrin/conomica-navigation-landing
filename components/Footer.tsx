@@ -7,7 +7,7 @@ import { fontVelaGxBold, fontVelaGxRegular, fontVelaMedium } from "./fonts";
  * dark (#191919) background, three columns up top — "Компании группы" +
  * company list, a "Контакты группы" column (phone, email and the office
  * address, each with a round icon), and the
- * social cards (QR/TenChat/VK) — then a divider and a single centred logo
+ * QR card — then a divider and a single centred logo
  * lockup at the bottom (email/phone moved out of that bottom row into
  * their own column above).
  *
@@ -180,14 +180,6 @@ export default function Footer() {
                 </p>
               </div>
             </SocialCard>
-            <div className="flex w-[7.6389cqw] shrink-0 flex-col gap-[0.5556cqw]">
-              <SocialCard href="https://tenchat.ru/conomica" className="h-[8.0556cqw] w-full p-[0.6944cqw]">
-                <Asset src="/footer/tenchat.svg" alt="TenChat" className="h-[5.8333cqw] w-[5.4167cqw]" />
-              </SocialCard>
-              <SocialCard href="https://vk.com/conomica" className="h-[7.7778cqw] w-full p-[0.6944cqw]">
-                <Asset src="/footer/vk.svg" alt="ВКонтакте" className="h-[5.2778cqw] w-[5.3403cqw]" />
-              </SocialCard>
-            </div>
           </div>
         </div>
 
