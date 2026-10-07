@@ -68,7 +68,7 @@ export default function Hero() {
             header (see SiteHeader.tsx); scrolls away with the rest of Hero.
             z-[60] keeps it above the header's z-50 so the header's own
             backdrop-blur doesn't blur the logo underneath it. */}
-        <div className="absolute z-[60] flex items-center gap-[1.6667cqw]" style={{ left: "2.3611cqw", top: "3.125cqw" }}>
+        <div id="hero-logo" className="absolute z-[60] flex items-center gap-[1.6667cqw]" style={{ left: "2.3611cqw", top: "3.125cqw" }}>
           <Asset src="/hero/cone.svg" alt="" className="h-[4.6528cqw] w-[4.0972cqw]" />
           <div className="flex flex-col items-start gap-[0.2778cqw]">
             <Asset src="/hero/conomica-wordmark.svg" alt="Conomica" className="h-[3.8889cqw] w-[22.7083cqw]" />

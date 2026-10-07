@@ -16,25 +16,25 @@ import { fontVelaGxBold, fontVelaMedium } from "./fonts";
  * authored in `em` (ratio to its own font-size), so it needed no change.
  */
 
-interface Person {
+export interface Person {
   name: string;
   title: string;
   photo: string;
 }
 
-const LEADS: Person[] = [
+export const LEADS: Person[] = [
   { name: "Светлана Васина", title: "Генеральный директор", photo: "/team/vasina.png" },
   { name: "Кирилл Панов", title: "Управляющий партнёр", photo: "/team/panov.png" },
 ];
 
-const TEAM: Person[] = [
+export const TEAM: Person[] = [
   { name: "Ирина Юманова", title: "Директор по финансам и инвестициям", photo: "/team/yumanova.png" },
   { name: "Андрей Горбунов", title: "Директор по цифровой трансформации", photo: "/team/gorbunov.png" },
   { name: "Альфия Чудутова", title: "Директор по продажам", photo: "/team/chudutova.png" },
   { name: "Михаил Гущин", title: "Руководитель ОЭБ", photo: "/team/gushchin.png" },
 ];
 
-const MANAGERS: Person[] = [
+export const MANAGERS: Person[] = [
   {
     name: "Фархат Гайдаров",
     title: "Руководитель департамента договорных и корпоративных отношений",

@@ -14,7 +14,7 @@ import CircularCarousel from "./ui/circular-carousel";
  * fluid; this pass just brings its remaining fixed px (track height, text
  * sizes, button sizes) in line with the same container via `cqw` too.
  */
-const facts = [
+export const facts = [
   {
     id: "leader",
     title: "Лидер отрасли",

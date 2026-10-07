@@ -18,10 +18,8 @@ import { fontVelaGxRegular, fontVelaRegular } from "./fonts";
  * `clamp(floor, Pcqw, ceiling)`, tracking is in `em`.
  */
 
-function NavLink({ children, href, dropShadow = true }: { children: ReactNode; href?: string; dropShadow?: boolean }) {
-  const className = `shrink-0 whitespace-nowrap border-b border-[#161616] pb-[0.1389cqw] text-[clamp(11px,0.9722cqw,15.56px)] leading-[1.4] tracking-[0.01em] text-[#161616] transition-colors hover:border-[#0EAD66] hover:text-[#0EAD66] ${
-    dropShadow ? "drop-shadow-[8px_6px_7.8px_rgba(0,0,0,0.14)]" : ""
-  } ${fontVelaRegular}`;
+function NavLink({ children, href }: { children: ReactNode; href?: string }) {
+  const className = `shrink-0 whitespace-nowrap border-b border-[#161616] pb-[0.1389cqw] text-[clamp(11px,0.9722cqw,15.56px)] leading-[1.4] tracking-[0.01em] text-[#161616] drop-shadow-[8px_6px_7.8px_rgba(0,0,0,0.14)] transition-colors hover:border-[#0EAD66] hover:text-[#0EAD66] ${fontVelaRegular}`;
 
   if (href) {
     return (
@@ -42,10 +40,13 @@ export default function SiteHeader() {
   const [pastHero, setPastHero] = useState(false);
 
   useEffect(() => {
-    const hero = document.getElementById("hero");
-    if (!hero) return;
+    // switch as soon as the Hero's big logo has scrolled out of the top of
+    // the screen (it's the header's stand-in until then), not only once the
+    // whole section is gone
+    const logo = document.getElementById("hero-logo") ?? document.getElementById("hero");
+    if (!logo) return;
 
-    const onScroll = () => setPastHero(hero.getBoundingClientRect().bottom <= 0);
+    const onScroll = () => setPastHero(logo.getBoundingClientRect().bottom <= 0);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
@@ -84,7 +85,6 @@ export default function SiteHeader() {
             <NavLink href="https://conomica.ru/creditors/">Бизнесу</NavLink>
             <NavLink href="https://conomica.ru/investors">Инвесторам</NavLink>
             <NavLink>О нас</NavLink>
-            <NavLink dropShadow={false}>Стать партнером</NavLink>
           </nav>
         </div>
       </div>
