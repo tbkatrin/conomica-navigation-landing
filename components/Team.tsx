@@ -54,8 +54,18 @@ const PLACEHOLDER_QUOTE = `Lorem Ipsum is simply dummy text of the printing and 
  * on hover of the parent `.group` card it expands to the full paragraph
  * in solid gray and a rotated closing quote mark appears — matches the
  * "state2" hover variant in Figma (node 192:2600).
+ *
+ * The card widens while it opens, and a paragraph laid out at the card's
+ * live width re-wraps on every frame (the words jump). So the text is
+ * stacked in two layers instead: the collapsed preview (wraps to the narrow
+ * card) fades out, then the full paragraph — laid out once at the card's
+ * *final* width, so it never reflows — fades in while the clip box opens.
+ * `expandedWidth` / `expandedHeight` are that final text width and the box
+ * height it needs, in cqw (they differ between the wide and square cards).
  */
-function PlaceholderQuote() {
+const OPEN_EASE = "ease-[cubic-bezier(0.32,0.72,0,1)]";
+
+function PlaceholderQuote({ expandedWidth, expandedHeight }: { expandedWidth: string; expandedHeight: string }) {
   return (
     <div className="flex w-full items-start gap-[0.2778cqw]">
       <Asset
@@ -63,9 +73,19 @@ function PlaceholderQuote() {
         alt=""
         className="h-[1.0417cqw] w-[1.0417cqw] shrink-0"
       />
-      <div className="max-h-[4.7222cqw] flex-1 overflow-hidden transition-[max-height] duration-500 ease-in-out group-hover:max-h-[27.7778cqw]">
+      <div
+        className={`grid max-h-[4.7222cqw] flex-1 overflow-hidden transition-[max-height] duration-[600ms] ${OPEN_EASE} group-hover:max-h-[var(--open-h)] [grid-template-columns:minmax(0,1fr)]`}
+        style={{ "--open-h": expandedHeight } as React.CSSProperties}
+      >
         <p
-          className={`bg-gradient-to-b from-[#919191] from-[2%] to-white to-[21%] bg-clip-text text-[clamp(11px,0.9722cqw,15.56px)] leading-none tracking-[-0.04em] text-transparent transition-[background-image,color] duration-300 group-hover:bg-none group-hover:text-[#919191] group-hover:leading-[1.5] ${fontVelaMedium}`}
+          className={`[grid-area:1/1] bg-gradient-to-b from-[#919191] from-[2%] to-white to-[21%] bg-clip-text text-[clamp(11px,0.9722cqw,15.56px)] leading-none tracking-[-0.04em] text-transparent transition-opacity duration-300 delay-[220ms] group-hover:opacity-0 group-hover:duration-200 group-hover:delay-0 ${fontVelaMedium}`}
+        >
+          {PLACEHOLDER_QUOTE}
+        </p>
+        <p
+          aria-hidden
+          className={`[grid-area:1/1] text-[clamp(11px,0.9722cqw,15.56px)] leading-[1.5] tracking-[-0.04em] text-[#919191] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-hover:duration-300 group-hover:delay-[220ms] ${fontVelaMedium}`}
+          style={{ width: expandedWidth }}
         >
           {PLACEHOLDER_QUOTE}
         </p>
@@ -105,10 +125,20 @@ function NameBlock({ name, title }: Person) {
 const WIDE_CARD_HEIGHT = "20cqw"; // 224px photo + 32px padding top/bottom, at the 1440 reference
 const SQUARE_CARD_HEIGHT = "37.2222cqw"; // 224px photo + 24px gap + 224px text + 64px padding, at the 1440 reference
 
-function WideCard({ person }: { person: Person }) {
+/** Where a card stays pinned while it widens on hover: the outer cards of a
+ * row grow inward only (otherwise they'd run off the section's edge now that
+ * the grid is as wide as the white cards), the middle ones grow both ways. */
+type Anchor = "left" | "center" | "right";
+const ANCHOR_CLASS: Record<Anchor, string> = {
+  left: "left-0",
+  center: "left-1/2 -translate-x-1/2",
+  right: "right-0",
+};
+
+function WideCard({ person, anchor }: { person: Person; anchor: Anchor }) {
   return (
     <div className="relative flex-1" style={{ height: WIDE_CARD_HEIGHT }}>
-      <div className="group absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 flex items-end gap-[1.6667cqw] rounded-[16px] bg-[#f5f5f5] p-[2.2222cqw] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-300 hover:z-20 hover:w-[115%] hover:items-start hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]">
+      <div className={`group absolute top-1/2 z-0 w-full -translate-y-1/2 ${ANCHOR_CLASS[anchor]} flex items-end gap-[1.6667cqw] rounded-[16px] bg-[#f5f5f5] p-[2.2222cqw] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] hover:z-20 hover:w-[115%] hover:items-start hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]`}>
         <Asset
           src={person.photo}
           alt={person.name}
@@ -116,7 +146,7 @@ function WideCard({ person }: { person: Person }) {
           className="h-[15.5556cqw] w-[15.5556cqw] shrink-0 overflow-hidden rounded-[8px]"
         />
         <div className="flex flex-1 flex-col items-start justify-between gap-[1.6667cqw] self-stretch">
-          <PlaceholderQuote />
+          <PlaceholderQuote expandedWidth="32.236cqw" expandedHeight="16cqw" />
           <NameBlock {...person} />
         </div>
       </div>
@@ -124,10 +154,10 @@ function WideCard({ person }: { person: Person }) {
   );
 }
 
-function SquareCard({ person }: { person: Person }) {
+function SquareCard({ person, anchor }: { person: Person; anchor: Anchor }) {
   return (
     <div className="relative flex-1" style={{ height: SQUARE_CARD_HEIGHT }}>
-      <div className="group absolute left-1/2 top-1/2 z-0 w-full -translate-x-1/2 -translate-y-1/2 flex flex-col items-center gap-[1.6667cqw] rounded-[16px] bg-[#f5f5f5] p-[2.2222cqw] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-300 hover:z-20 hover:w-[115%] hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]">
+      <div className={`group absolute top-1/2 z-0 w-full -translate-y-1/2 ${ANCHOR_CLASS[anchor]} flex flex-col items-center gap-[1.6667cqw] rounded-[16px] bg-[#f5f5f5] p-[2.2222cqw] shadow-[0_0_0_rgba(0,0,0,0)] transition-[width,box-shadow] duration-[600ms] ease-[cubic-bezier(0.32,0.72,0,1)] hover:z-20 hover:w-[115%] hover:shadow-[0_24px_60px_-15px_rgba(0,0,0,0.25)]`}>
         <Asset
           src={person.photo}
           alt={person.name}
@@ -135,7 +165,7 @@ function SquareCard({ person }: { person: Person }) {
           className="h-[15.5556cqw] w-full shrink-0 overflow-hidden rounded-[8px]"
         />
         <div className="flex min-h-[15.5556cqw] w-full flex-col items-start justify-between">
-          <PlaceholderQuote />
+          <PlaceholderQuote expandedWidth="20.2292cqw" expandedHeight="23cqw" />
           <NameBlock {...person} />
         </div>
       </div>
@@ -145,8 +175,11 @@ function SquareCard({ person }: { person: Person }) {
 
 export default function Team() {
   return (
-    <section className="relative z-10 mx-auto w-full max-w-[1600px] [container-type:inline-size]">
-      <div className="flex flex-col items-start gap-[3.3333cqw] px-[5.5556cqw] py-[6.9444cqw]">
+    <section
+      className="relative z-10 mx-auto w-full [container-type:inline-size]"
+      style={{ maxWidth: "min(1600px, calc(100% - 16px))" }}
+    >
+      <div className="flex flex-col items-start gap-[3.3333cqw] py-[6.9444cqw]">
         <p
           className={`w-[54.1667cqw] max-w-full text-[#212121] ${fontVelaGxBold}`}
           style={{
@@ -161,20 +194,24 @@ export default function Team() {
 
         <div className="flex w-full flex-col items-start gap-[1.6667cqw]">
           <div className="flex w-full items-center gap-[1.6667cqw]">
-            {LEADS.map((p) => (
-              <WideCard key={p.name} person={p} />
+            {LEADS.map((p, i) => (
+              <WideCard key={p.name} person={p} anchor={i === 0 ? "left" : "right"} />
             ))}
           </div>
 
           <div className="flex w-full items-start gap-[1.6667cqw]">
-            {TEAM.map((p) => (
-              <SquareCard key={p.name} person={p} />
+            {TEAM.map((p, i) => (
+              <SquareCard
+                key={p.name}
+                person={p}
+                anchor={i === 0 ? "left" : i === TEAM.length - 1 ? "right" : "center"}
+              />
             ))}
           </div>
 
           <div className="flex w-full items-center gap-[1.6667cqw]">
-            {MANAGERS.map((p) => (
-              <WideCard key={p.name} person={p} />
+            {MANAGERS.map((p, i) => (
+              <WideCard key={p.name} person={p} anchor={i === 0 ? "left" : "right"} />
             ))}
           </div>
         </div>

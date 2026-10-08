@@ -120,8 +120,11 @@ function ContactCard({
 
 export default function ContactUs() {
   return (
-    <section className="relative z-10 mx-auto w-full max-w-[1600px] [container-type:inline-size]">
-      <div className="flex w-full flex-col items-start gap-[4.4444cqw] px-[5.6944cqw] py-[6.9444cqw]">
+    <section
+      className="relative z-10 mx-auto w-full [container-type:inline-size]"
+      style={{ maxWidth: "min(1600px, calc(100% - 16px))" }}
+    >
+      <div className="flex w-full flex-col items-start gap-[4.4444cqw] py-[6.9444cqw]">
       <p
         className={`w-full max-w-[37.4306cqw] text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#212121] ${fontVelaGxBold}`}
       >
