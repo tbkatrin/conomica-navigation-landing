@@ -73,21 +73,21 @@ const STATS: Stat[] = [
     unit: "млрд",
     description: "было взыскано по приобретенному портфелю требований",
     left: 296,
-    top: 328,
+    top: 376,
   },
   {
     value: "1.5",
     unit: "млрд",
     description: "заработали наши клиенты на сделках с долговыми требованиями",
     left: 545,
-    top: 326,
+    top: 374,
   },
   {
     value: "2.3",
     unit: "млрд",
     description: "активный портфель, находящийся в текущем взыскании",
     left: 408,
-    top: 553,
+    top: 624,
   },
   {
     prefix: "более",
@@ -100,7 +100,7 @@ const STATS: Stat[] = [
       </>
     ),
     left: 707,
-    top: 554,
+    top: 625,
   },
 ];
 
@@ -161,7 +161,7 @@ function StatBlock({ stat, index }: { stat: Stat; index: number }) {
 export default function StatsShowcase() {
   return (
     <section className="relative z-10 mx-auto w-full max-w-[1600px] overflow-hidden bg-[#F5F5F5] [container-type:inline-size]">
-      <div className="relative" style={{ minHeight: CQW(780), paddingBottom: CQW(72) }}>
+      <div className="relative" style={{ minHeight: CQW(860), paddingBottom: CQW(72) }}>
         <p
           className={`absolute whitespace-nowrap text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
           style={{ left: CQW(805), top: CQW(135) }}
@@ -176,7 +176,7 @@ export default function StatsShowcase() {
         {/* the existing animated ring+cone mark, bigger here and with a
             single line travelling dot-to-dot instead of Offer's
             bidirectional fill */}
-        <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: CQW(1027), top: CQW(380) }}>
+        <div className="absolute -translate-x-1/2 -translate-y-1/2" style={{ left: CQW(1027), top: CQW(410) }}>
           <DecorativeCircleMark size={CQW(340)} travel="sequential" />
         </div>
       </div>

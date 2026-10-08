@@ -53,7 +53,7 @@ const PRODUCTS: Product[] = [
   {
     name: "Conomica",
     sub: "цессии",
-    headline: " управления сделками по приобретению и взысканию истекшей дебиторской задолжености",
+    headline: " управления сделками по приобретению и взысканию истекшей дебиторской задолженности",
     href: "https://cabinet.conomica.space/",
     badges: [
       { icon: "/hero/badge-skolkovo.svg", w: 30, h: 30.2, text: "Резидент Сколково" },
