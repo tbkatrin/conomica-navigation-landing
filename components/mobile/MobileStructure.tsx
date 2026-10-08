@@ -39,10 +39,10 @@ function Connector() {
 function CompanyCard({ title, titleColor = "#191919", description }: (typeof COMPANIES)[number]) {
   return (
     <div className={`flex w-full flex-col gap-2 rounded-[12px] bg-white p-5 ${SHADOW}`}>
-      <p className={`text-[24px] leading-[0.95] tracking-[-0.03em] ${fontVelaGxBold}`} style={{ color: titleColor }}>
+      <p className={`tm-h3 ${fontVelaGxBold}`} style={{ color: titleColor }}>
         {title}
       </p>
-      <p className={`text-[14px] leading-[1.1] tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}>{description}</p>
+      <p className={`tm-small text-[#626262] ${fontVelaMedium}`}>{description}</p>
     </div>
   );
 }
@@ -52,7 +52,7 @@ export default function MobileStructure() {
   return (
     <section className="px-4 pb-4">
       <div className="flex flex-col items-center rounded-[24px] bg-white px-5 py-8">
-        <h2 className={`w-full pb-6 text-[38px] leading-[0.98] tracking-[-0.03em] text-[#161616] ${fontVelaGxBold}`}>
+        <h2 className={`w-full pb-6 tm-h3 text-[#161616] ${fontVelaGxBold}`}>
           Структура группы компаний
         </h2>
 

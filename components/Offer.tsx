@@ -62,7 +62,7 @@ function StatRow({
   return (
     <div className="relative w-full shrink-0" style={{ height: CQ(height) }}>
       <p
-        className={`absolute whitespace-nowrap text-[clamp(11px,1.0204cqw,15.56px)] leading-none tracking-[-0.04em] text-[#24252b] ${fontVelaMedium}`}
+        className={`absolute whitespace-nowrap t-small text-[#24252b] ${fontVelaMedium}`}
         style={{
           left: CQ(preStyle.left),
           top: CQ(preStyle.top),
@@ -78,7 +78,7 @@ function StatRow({
         {number}
       </p>
       <p
-        className={`absolute text-[clamp(11px,1.0204cqw,15.56px)] leading-none tracking-[-0.04em] text-[#24252b] ${fontVelaMedium}`}
+        className={`absolute t-small text-[#24252b] ${fontVelaMedium}`}
         style={{ left: CQ(postStyle.left), top: CQ(postStyle.top), width: CQ(114) }}
       >
         {post}
@@ -116,12 +116,12 @@ function SolutionCard({
       <div className="flex w-full items-start justify-between">
         <div className="flex flex-col items-start" style={{ width: CQ(220), gap: CQ(textGap) }}>
           <p
-            className={`w-full text-[clamp(11px,2.0408cqw,31.11px)] leading-[0.9] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
+            className={`w-full t-h3 text-[#191919] ${fontVelaGxBold}`}
           >
             {title}
           </p>
           <p
-            className={`w-full text-[clamp(11px,1.312cqw,20px)] leading-none tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
+            className={`w-full t-body text-[#626262] ${fontVelaMedium}`}
           >
             {description}
           </p>
@@ -155,7 +155,7 @@ function SolutionCard({
         style={{ height: CQ(48) }}
       >
         <span
-          className={`text-[clamp(11px,1.1662cqw,17.78px)] leading-[1.2] tracking-[0.01em] text-white ${fontVelaMedium}`}
+          className={`t-button text-white ${fontVelaMedium}`}
         >
           Подробнее
         </span>
@@ -166,7 +166,10 @@ function SolutionCard({
 
 export default function Offer() {
   return (
-    <section className="relative z-10 mx-auto w-full max-w-[1600px] overflow-hidden rounded-[24px] bg-white [container-type:inline-size]">
+    <section
+      className="relative z-10 mx-auto w-full max-w-[1600px] overflow-hidden rounded-[24px] bg-white [container-type:inline-size]"
+      style={{ "--ref": 13.72 } as React.CSSProperties}
+    >
       {/* Grey ring-with-dots shapes behind the content (Figma groups
           468:2659 / 468:2658), both rotated -61.35deg and partly clipped by
           the card's edge; the right one carries the grey cone. */}
@@ -184,7 +187,7 @@ export default function Offer() {
       >
         <div className="w-full" style={{ padding: `0 ${CQ(32)}` }}>
           <p
-            className={`text-[clamp(12.67px,2.7697cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#212226] ${fontVelaGxBold}`}
+            className={`t-h2 text-[#212226] ${fontVelaGxBold}`}
             style={{ width: CQ(618), maxWidth: "100%" }}
           >
             Что мы можем предложить бизнесу, у которого есть дебиторка?
@@ -195,7 +198,7 @@ export default function Offer() {
           <div className="min-w-0 flex-1" />
           <div className="min-w-0 flex-1">
             <p
-              className={`text-[clamp(12.67px,2.7697cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#212226] ${fontVelaGxBold}`}
+              className={`t-h2 text-[#212226] ${fontVelaGxBold}`}
               style={{ width: CQ(660) }}
             >
               Полный цикл <span className="text-[#00703e]">от оценки до фактической монетизации</span> дебиторской

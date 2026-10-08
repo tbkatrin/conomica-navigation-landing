@@ -35,7 +35,7 @@ export default function MobileFacts() {
   return (
     <section className="px-4 pb-4">
       <div className="rounded-[24px] bg-white py-8">
-        <h2 className={`px-5 pb-6 text-[38px] leading-[0.98] tracking-[-0.03em] text-[#161616] ${fontVelaGxBold}`}>
+        <h2 className={`px-5 pb-6 tm-h2 text-[#161616] ${fontVelaGxBold}`}>
           Факты о нас
         </h2>
 
@@ -51,8 +51,8 @@ export default function MobileFacts() {
               <div className="flex h-14 w-14 items-center justify-center rounded-[12px] bg-white">
                 <Asset src="/hero/cone.svg" alt="" className="h-[30px] w-[27px]" />
               </div>
-              <p className={`text-[28px] leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}>{f.title}</p>
-              <p className={`text-[18px] leading-[1.1] tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}>
+              <p className={`tm-h3 text-[#191919] ${fontVelaGxBold}`}>{f.title}</p>
+              <p className={`tm-body text-[#626262] ${fontVelaMedium}`}>
                 {f.description}
               </p>
             </div>

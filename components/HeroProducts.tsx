@@ -72,12 +72,12 @@ function ProductCard({ product, demo }: { product: Product; demo: boolean }) {
             demo ? "-translate-y-1 opacity-0 blur-[2px] delay-0" : "translate-y-0 opacity-100 blur-[0px] delay-200"
           } ${fontVelaGxBold}`}
         >
-          <p className="text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em]">{product.name}</p>
-          <p className="text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em]">{product.sub}</p>
+          <p className="t-h2">{product.name}</p>
+          <p className="t-h3">{product.sub}</p>
         </div>
         <p
           aria-hidden
-          className={`absolute inset-0 flex items-center text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-[#191919] transition-[opacity,transform,filter] duration-[900ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-[0px] group-hover:delay-200 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:blur-[0px] group-focus-within:delay-200 ${
+          className={`absolute inset-0 flex items-center t-body leading-[1.15]! text-[#191919] transition-[opacity,transform,filter] duration-[900ms] ease-[cubic-bezier(0.4,0,0.2,1)] group-hover:translate-y-0 group-hover:opacity-100 group-hover:blur-[0px] group-hover:delay-200 group-focus-within:translate-y-0 group-focus-within:opacity-100 group-focus-within:blur-[0px] group-focus-within:delay-200 ${
             demo ? "translate-y-0 opacity-100 blur-[0px] delay-200" : "translate-y-1 opacity-0 blur-[2px] delay-0"
           } ${fontVelaMedium}`}
         >
@@ -91,7 +91,7 @@ function ProductCard({ product, demo }: { product: Product; demo: boolean }) {
         className="flex h-[3.3333cqw] shrink-0 items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
         style={{ width: "clamp(110px, 11.1111cqw, 177.78px)" }}
       >
-        <span className={`text-[clamp(11px,1.1111cqw,17.78px)] leading-[1.2] tracking-[0.01em] text-white ${fontVelaMedium}`}>
+        <span className={`t-button text-white ${fontVelaMedium}`}>
           На платформу
         </span>
       </a>

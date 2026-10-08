@@ -56,7 +56,7 @@ export default function MobileHero() {
       </div>
 
       <h1
-        className={`px-4 pb-6 pt-2 text-[38px] leading-[0.98] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
+        className={`px-4 pb-6 pt-2 tm-h2 text-[#191919] ${fontVelaGxBold}`}
       >
         Экосистема fintech продуктов от Conomica
       </h1>
@@ -65,10 +65,10 @@ export default function MobileHero() {
         {PRODUCTS.map((p) => (
           <div key={p.sub} className={`flex flex-col gap-4 rounded-[16px] bg-white px-5 pb-5 pt-6 ${SHADOW}`}>
             <div className={`flex flex-col gap-0.5 text-black ${fontVelaGxBold}`}>
-              <p className="text-[38px] leading-[0.98] tracking-[-0.03em]">{p.name}</p>
-              <p className="text-[28px] leading-[0.95] tracking-[-0.03em]">{p.sub}</p>
+              <p className="tm-h2">{p.name}</p>
+              <p className="tm-h3">{p.sub}</p>
             </div>
-            <p className={`text-[14px] leading-[1.15] tracking-[-0.04em] text-[#191919] ${fontVelaMedium}`}>
+            <p className={`tm-small text-[#191919] ${fontVelaMedium}`}>
               {p.description}
             </p>
             <CtaButton href={p.href}>На платформу</CtaButton>

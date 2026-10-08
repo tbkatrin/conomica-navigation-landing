@@ -12,24 +12,24 @@ const CARDS = [
 export default function MobileContact() {
   return (
     <section className="flex flex-col gap-6 px-4 py-10">
-      <h2 className={`text-[38px] leading-[0.98] tracking-[-0.03em] text-[#212121] ${fontVelaGxBold}`}>
+      <h2 className={`tm-h3 text-[#212121] ${fontVelaGxBold}`}>
         Свяжитесь с нами и мы предложим <span className="text-[#00703E]">лучшее решение</span>
       </h2>
       <div className="flex flex-col gap-3">
         {CARDS.map((c) => (
           <div key={c.label} className={`flex flex-col gap-5 rounded-[8px] bg-white p-5 ${SHADOW}`}>
-            <p className={`text-[14px] leading-none tracking-[-0.04em] text-black ${fontVelaMedium}`}>{c.label}</p>
+            <p className={`tm-body text-black ${fontVelaMedium}`}>{c.label}</p>
             <div className="flex flex-col gap-3">
               <a
                 href={`tel:${c.phone.replace(/[^+\d]/g, "")}`}
-                className={`flex items-center gap-2.5 text-[24px] leading-[0.95] tracking-[-0.03em] text-black ${fontVelaGxBold}`}
+                className={`flex items-center gap-2.5 tm-h4 text-black ${fontVelaMedium}`}
               >
                 <ContactIcon kind="phone" size={32} color="#353537" />
                 {c.phone}
               </a>
               <a
                 href={`mailto:${c.email}`}
-                className={`flex items-center gap-2.5 break-all text-[24px] leading-[0.95] tracking-[-0.03em] text-black ${fontVelaGxBold}`}
+                className={`flex items-center gap-2.5 break-all tm-h4 text-black ${fontVelaMedium}`}
               >
                 <ContactIcon kind="mail" size={32} color="#353537" />
                 {c.email}

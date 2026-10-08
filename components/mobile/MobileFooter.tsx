@@ -6,8 +6,8 @@ import { fontVelaGxBold, fontVelaGxRegular, fontVelaMedium } from "../fonts";
  * contacts block, the companies with their ИНН, the Telegram QR card, a
  * divider and the logo lockup, stacked. Same copy as the desktop footer. */
 
-const T2 = `text-[14px] leading-none tracking-[-0.04em] ${fontVelaMedium}`;
-const H3 = `text-[28px] leading-[0.9] tracking-[-0.03em] text-[#17171a] ${fontVelaGxBold}`;
+const T2 = `tm-small ${fontVelaMedium}`;
+const H3 = `tm-h3 text-[#17171a] ${fontVelaGxBold}`;
 
 export default function MobileFooter() {
   return (

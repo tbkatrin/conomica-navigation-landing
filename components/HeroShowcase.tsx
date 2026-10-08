@@ -160,7 +160,7 @@ function Badge({ spec }: { spec: BadgeSpec }) {
         <Asset src={icon.src} alt="" className="shrink-0" style={{ width: CQW(icon.w), height: CQW(icon.h) }} />
       </div>
       <p
-        className={`whitespace-pre-line text-[clamp(11px,1.3534cqw,20px)] leading-none tracking-[-0.04em] text-[#191919] ${fontVelaMedium}`}
+        className={`whitespace-pre-line t-body leading-[1.1]! text-[#191919] ${fontVelaMedium}`}
         style={{ width: spec.textWidth ? CQW(spec.textWidth) : undefined, whiteSpace: spec.textWidth ? undefined : "pre" }}
       >
         {spec.text}
@@ -182,8 +182,8 @@ function BadgeRow({ badges }: { badges: BadgeSpec[] }) {
 function HeadlineCenter({ productName }: { productName: string }) {
   return (
     <div className={`text-center text-black ${fontVelaGxExtraBold}`}>
-      <p className="text-[clamp(17.33px,3.9098cqw,57.78px)] leading-[0.95] tracking-[-0.03em]">Conomica</p>
-      <p className={`text-[clamp(12.67px,2.8571cqw,42.22px)] leading-[0.98] tracking-[-0.03em] ${fontVelaGxBold}`}>{productName}</p>
+      <p className="t-h1">Conomica</p>
+      <p className={`t-h2 ${fontVelaGxBold}`}>{productName}</p>
     </div>
   );
 }
@@ -192,14 +192,14 @@ function TextBlock({ headline, ctaHref }: { headline: ReactNode; ctaHref?: strin
   const CtaTag = ctaHref ? "a" : "button";
   return (
     <div className="flex w-full flex-col items-start gap-[0.7519cqw]">
-      <p className={`text-[clamp(11px,2.1053cqw,31.11px)] leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}>
+      <p className={`t-h3 text-[#191919] ${fontVelaGxBold}`}>
         {headline}
       </p>
       <CtaTag
         {...(ctaHref ? { href: ctaHref, target: "_blank", rel: "noopener noreferrer" } : {})}
         className="flex h-[3.609cqw] w-[12.0301cqw] items-center justify-center rounded-[12px] bg-[#00703E] drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)] transition-colors hover:bg-[#0EAD66]"
       >
-        <span className={`text-[clamp(11px,1.203cqw,17.78px)] leading-[1.2] tracking-[0.01em] text-white ${fontVelaMedium}`}>
+        <span className={`t-button text-white ${fontVelaMedium}`}>
           На платформу
         </span>
       </CtaTag>
@@ -287,7 +287,7 @@ export default function HeroShowcase({ scrollLength = 220 }: HeroShowcaseProps) 
       >
         <div
           className="relative mx-auto max-w-full overflow-hidden rounded-[8px] bg-white [container-type:size]"
-          style={{ width: "96.9388cqw", aspectRatio: "1330 / 584" }}
+          style={{ width: "96.9388cqw", aspectRatio: "1330 / 584", "--ref": 13.3 } as React.CSSProperties}
         >
           <Slot
             direction="up"

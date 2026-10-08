@@ -33,7 +33,7 @@ const CARDS_TOP = "max(30cqw, min(calc(42.7778cqw + var(--wave-extra)), calc(100
 
 export default function Hero() {
   return (
-    <section id="hero" className="relative w-full overflow-hidden bg-[#F5F5F5]">
+    <section id="hero" className="relative w-full overflow-x-clip bg-[#F5F5F5]">
       {/* Animated wave background — full-bleed (spans the real viewport,
           not capped to the 1600px content column). Height uses `aspect-`
           so the box's own ratio always matches the source photo's

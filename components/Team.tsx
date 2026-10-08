@@ -78,13 +78,13 @@ function PlaceholderQuote({ expandedWidth, expandedHeight }: { expandedWidth: st
         style={{ "--open-h": expandedHeight } as React.CSSProperties}
       >
         <p
-          className={`[grid-area:1/1] bg-gradient-to-b from-[#919191] from-[2%] to-white to-[21%] bg-clip-text text-[clamp(11px,0.9722cqw,15.56px)] leading-none tracking-[-0.04em] text-transparent transition-opacity duration-300 delay-[220ms] group-hover:opacity-0 group-hover:duration-200 group-hover:delay-0 ${fontVelaMedium}`}
+          className={`[grid-area:1/1] bg-gradient-to-b from-[#919191] from-[2%] to-white to-[21%] bg-clip-text t-small text-transparent transition-opacity duration-300 delay-[220ms] group-hover:opacity-0 group-hover:duration-200 group-hover:delay-0 ${fontVelaMedium}`}
         >
           {PLACEHOLDER_QUOTE}
         </p>
         <p
           aria-hidden
-          className={`[grid-area:1/1] text-[clamp(11px,0.9722cqw,15.56px)] leading-[1.5] tracking-[-0.04em] text-[#919191] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-hover:duration-300 group-hover:delay-[220ms] ${fontVelaMedium}`}
+          className={`[grid-area:1/1] t-small text-[#919191] opacity-0 transition-opacity duration-200 group-hover:opacity-100 group-hover:duration-300 group-hover:delay-[220ms] ${fontVelaMedium}`}
           style={{ width: expandedWidth }}
         >
           {PLACEHOLDER_QUOTE}
@@ -103,12 +103,12 @@ function NameBlock({ name, title }: Person) {
   return (
     <div className="flex w-full flex-col items-start gap-[0.5556cqw]">
       <p
-        className={`w-full text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}
+        className={`w-full t-h2 text-[#161616] ${fontVelaGxBold}`}
       >
         {name}
       </p>
       <p
-        className={`w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
+        className={`w-full t-body text-[#626262] ${fontVelaMedium}`}
       >
         {title}
       </p>
@@ -164,7 +164,7 @@ function SquareCard({ person, anchor }: { person: Person; anchor: Anchor }) {
           fit="cover"
           className="h-[15.5556cqw] w-full shrink-0 overflow-hidden rounded-[8px]"
         />
-        <div className="flex min-h-[15.5556cqw] w-full flex-col items-start justify-between">
+        <div className="flex min-h-[15.5556cqw] w-full flex-col items-start justify-between gap-[2.2222cqw]">
           <PlaceholderQuote expandedWidth="20.2292cqw" expandedHeight="23cqw" />
           <NameBlock {...person} />
         </div>

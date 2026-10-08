@@ -11,7 +11,7 @@ const PEOPLE: Person[] = [...LEADS, ...TEAM, ...MANAGERS];
 export default function MobileTeam() {
   return (
     <section className="flex flex-col gap-6 px-4 py-10">
-      <h2 className={`text-[28px] leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}>
+      <h2 className={`tm-h3 text-[#161616] ${fontVelaGxBold}`}>
         Conomica — это люди. И мы с гордостью показываем тех, кто двигает нас вперёд
       </h2>
       <div className="grid grid-cols-2 gap-3">
@@ -19,8 +19,8 @@ export default function MobileTeam() {
           <div key={p.name} className={`flex flex-col gap-3 rounded-[16px] bg-white p-3 ${SHADOW}`}>
             <Asset src={p.photo} alt={p.name} fit="cover" className="aspect-square w-full rounded-[12px]" />
             <div className="flex flex-col gap-1.5">
-              <p className={`text-[24px] leading-[0.98] tracking-[-0.02em] text-[#161616] ${fontVelaGxBold}`}>{p.name}</p>
-              <p className={`text-[14px] leading-[1.1] tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}>{p.title}</p>
+              <p className={`tm-h4 text-[#161616] ${fontVelaMedium}`}>{p.name}</p>
+              <p className={`tm-small text-[#626262] ${fontVelaMedium}`}>{p.title}</p>
             </div>
           </div>
         ))}

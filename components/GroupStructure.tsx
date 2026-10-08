@@ -53,13 +53,13 @@ function CompanyCard({
       style={{ left: CQW(left), top: CQW(top), width: CQW(width), gap: CQW(gap) }}
     >
       <p
-        className={`w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em] ${fontVelaGxBold}`}
+        className={`w-full t-h3 ${fontVelaGxBold}`}
         style={{ color: titleColor }}
       >
         {title}
       </p>
       <div
-        className={`w-full text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
+        className={`w-full t-body text-[#626262] ${fontVelaMedium}`}
       >
         {description}
       </div>
@@ -158,12 +158,12 @@ export default function GroupStructure() {
           style={{ left: CQW(AO_UK.left), top: CQW(AO_UK.top), width: CQW(AO_UK.width), gap: CQW(13) }}
         >
           <p
-            className={`w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em] text-[#0a1833] ${fontVelaGxBold}`}
+            className={`w-full t-h3 text-[#0a1833] ${fontVelaGxBold}`}
           >
             АО УК Кономика
           </p>
           <p
-            className={`w-full text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}
+            className={`w-full t-body text-[#626262] ${fontVelaMedium}`}
           >
             Холдинговая компания группы
           </p>

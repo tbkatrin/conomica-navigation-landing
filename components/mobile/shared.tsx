@@ -14,7 +14,7 @@ export const BTN_SHADOW = "drop-shadow-[0px_2px_1px_rgba(0,0,0,0.04)]";
 /** Green full-width CTA, labelled in the web button style (Vela Sans Medium
  * 16px, 120% line-height, +1% tracking). */
 export function CtaButton({ href, children }: { href?: string; children: ReactNode }) {
-  const className = `flex h-11 w-full items-center justify-center rounded-[12px] bg-[#00703E] px-4 text-[16px] leading-[1.2] tracking-[0.01em] text-white transition-colors hover:bg-[#0EAD66] ${BTN_SHADOW} ${fontVelaMedium}`;
+  const className = `flex h-11 w-full items-center justify-center rounded-[12px] bg-[#00703E] px-4 tm-button text-white transition-colors hover:bg-[#0EAD66] ${BTN_SHADOW} ${fontVelaMedium}`;
   if (href) {
     return (
       <a href={href} target="_blank" rel="noopener noreferrer" className={className}>

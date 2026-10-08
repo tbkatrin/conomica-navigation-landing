@@ -14,15 +14,15 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-// Real brand font (Regular only — see globals.css for the "Vela Sans GX"
-// heading family, which still has no font file and falls back to system
-// sans-serif). font-weight classes heavier than 400 (font-medium,
-// font-bold) fake-embolden this single file rather than using a real
-// matching weight, since only Regular was provided.
+// Brand font: one variable file ("Vela Sans GX", weight axis 200–800) that
+// serves every weight the site uses — Regular, Medium, Bold, ExtraBold — as
+// real cuts instead of a faux-emboldened Regular. Both brand family names
+// (Vela Sans and Vela Sans GX) resolve to it, see globals.css.
 const velaSans = localFont({
-  src: "./fonts/VelaSans-Regular.ttf",
+  src: "./fonts/VelaSans-GX.woff2",
   variable: "--font-vela-sans-file",
-  weight: "400",
+  weight: "200 800",
+  style: "normal",
   display: "swap",
 });
 

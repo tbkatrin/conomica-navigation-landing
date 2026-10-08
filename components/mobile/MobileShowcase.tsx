@@ -108,7 +108,7 @@ export default function MobileShowcase() {
               {p.badges.map((b) => (
                 <div key={b.text} className={`flex flex-col gap-2.5 rounded-[8px] bg-white p-3 ${SHADOW}`}>
                   <Asset src={b.icon} alt="" className="shrink-0" style={{ width: b.w, height: b.h }} />
-                  <p className={`text-[14px] leading-[1.15] tracking-[-0.04em] text-[#191919] ${fontVelaMedium}`}>
+                  <p className={`tm-small text-[#191919] ${fontVelaMedium}`}>
                     {b.text}
                   </p>
                 </div>
@@ -116,11 +116,11 @@ export default function MobileShowcase() {
             </div>
 
             <div className={`flex flex-col gap-0.5 text-black ${fontVelaGxBold}`}>
-              <p className="text-[38px] leading-[0.98] tracking-[-0.03em]">{p.name}</p>
-              <p className="text-[28px] leading-[0.95] tracking-[-0.03em]">{p.sub}</p>
+              <p className="tm-h2">{p.name}</p>
+              <p className="tm-h3">{p.sub}</p>
             </div>
 
-            <p className={`text-[24px] leading-[1.05] tracking-[-0.03em] text-[#191919] ${fontVelaMedium}`}>
+            <p className={`tm-h4 text-[#191919] ${fontVelaMedium}`}>
               <span className="text-[#00703E]">Платформа</span>
               {p.headline}
             </p>

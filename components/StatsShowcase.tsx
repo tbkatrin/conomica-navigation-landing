@@ -144,14 +144,14 @@ function StatBlock({ stat, index }: { stat: Stat; index: number }) {
             {stat.prefix}
           </p>
         )}
-        <p className={`text-[clamp(17.33px,3.6111cqw,57.78px)] leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxExtraBold}`}>
+        <p className={`t-h1 text-[#191919] ${fontVelaGxExtraBold}`}>
           {stat.value}
         </p>
         <p className={`text-[clamp(11px,1.3889cqw,22.22px)] leading-[0.94] tracking-[-0.05em] text-[#353537] ${fontVelaBold}`}>
           {stat.unit}
         </p>
       </div>
-      <p className={`mt-[1.5972cqw] text-[clamp(11px,0.9722cqw,15.56px)] leading-none tracking-[-0.04em] text-[#353537] ${fontVelaMedium}`}>
+      <p className={`mt-[1.5972cqw] t-small text-[#353537] ${fontVelaMedium}`}>
         {stat.description}
       </p>
     </motion.div>
@@ -163,7 +163,7 @@ export default function StatsShowcase() {
     <section className="relative z-10 mx-auto w-full max-w-[1600px] overflow-hidden bg-[#F5F5F5] [container-type:inline-size]">
       <div className="relative" style={{ minHeight: CQW(860), paddingBottom: CQW(72) }}>
         <p
-          className={`absolute whitespace-nowrap text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
+          className={`absolute whitespace-nowrap t-h2 text-[#191919] ${fontVelaGxBold}`}
           style={{ left: CQW(805), top: CQW(135) }}
         >
           Кономика в цифрах

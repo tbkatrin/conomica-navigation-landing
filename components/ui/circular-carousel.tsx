@@ -46,14 +46,14 @@ function renderCardContent(item: CarouselItem) {
       </span>
       {item.tag && (
         <span
-          className={`rounded-full bg-[#161616]/5 px-[0.5556cqw] py-[0.1389cqw] text-[clamp(11px,0.6944cqw,11.11px)] uppercase tracking-wider text-[#161616]/70 ${fontVelaMedium}`}
+          className={`rounded-full bg-[#161616]/5 px-[0.5556cqw] py-[0.1389cqw] t-caption text-[#161616]/70 ${fontVelaMedium}`}
         >
           {item.tag}
         </span>
       )}
       <h3
         className={cn(
-          "w-full text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.02em] text-[#161616]",
+          "w-full t-h3 text-[#161616]",
           fontVelaGxBold,
         )}
       >
@@ -61,7 +61,7 @@ function renderCardContent(item: CarouselItem) {
       </h3>
       <p
         className={cn(
-          "w-full text-[clamp(11px,1.25cqw,20px)] leading-[1.2] tracking-[-0.04em] text-[#626262]",
+          "w-full t-body text-[#626262]",
           fontVelaMedium,
         )}
       >
@@ -206,7 +206,7 @@ export function CircularCarousel({
           active cards sit symmetrically around the center with a fixed
           gap between them). */}
       <h2
-        className={`mb-[1.6667cqw] w-full text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}
+        className={`mb-[1.6667cqw] w-full t-h2 text-[#191919] ${fontVelaGxBold}`}
         style={{ paddingLeft: Math.max(0, trackWidth / 2 - cardWidth - ACTIVE_GAP / 2) }}
       >
         Факты о нас

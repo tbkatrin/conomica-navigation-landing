@@ -22,7 +22,7 @@ function Logo() {
       <Asset src="/hero/cone.svg" alt="" className="h-[29px] w-[26px]" />
       <div className="flex flex-col items-start gap-px">
         <Asset src="/hero/conomica-wordmark.svg" alt="Conomica" className="h-[19px] w-[112px]" />
-        <p className={`text-[10px] leading-none text-[#161616] ${fontVelaGxRegular}`}>группа компаний</p>
+        <p className={`text-[12px] leading-none text-[#161616] ${fontVelaGxRegular}`}>группа компаний</p>
       </div>
     </div>
   );
@@ -84,7 +84,7 @@ export default function MobileHeader() {
           </div>
           <nav className="flex flex-col gap-7 px-4 pt-8">
             {LINKS.map((l) => {
-              const cls = `border-b border-[#D8D8D8] pb-3 text-left text-[28px] leading-[0.9] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`;
+              const cls = `border-b border-[#D8D8D8] pb-3 text-left tm-h3 text-[#191919] ${fontVelaGxBold}`;
               return l.href ? (
                 <a key={l.label} href={l.href} className={cls} onClick={() => setOpen(false)}>
                   {l.label}

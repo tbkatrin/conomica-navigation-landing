@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 import { DecorativeCircleMark } from "../DecorativeCircle";
-import { fontVelaBold, fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "../fonts";
+import { fontVelaGxBold, fontVelaGxExtraBold, fontVelaMedium } from "../fonts";
 
 /** Mobile "Кономика в цифрах": the six stats in a two-column grid, then the
  * animated ring mark. Same copy as StatsShowcase.tsx. */
@@ -22,7 +22,7 @@ const STATS: { prefix?: string; value: string; unit: string; description: ReactN
 export default function MobileStats() {
   return (
     <section className="flex flex-col gap-8 px-4 py-10">
-      <h2 className={`text-[38px] leading-[0.98] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}>
+      <h2 className={`tm-h3 text-[#191919] ${fontVelaGxBold}`}>
         Кономика в цифрах
       </h2>
 
@@ -31,17 +31,17 @@ export default function MobileStats() {
           <div key={s.value} className="flex flex-col gap-3 border-l border-[#191919] pl-[14px]">
             <div className="flex flex-col items-start gap-1">
               {/* reserve the prefix row so the numbers line up across a row */}
-              <p className={`h-[17px] text-[18px] leading-[0.94] tracking-[-0.05em] text-[#353537] ${fontVelaBold}`}>
+              <p className={`h-[22px] tm-body text-[#353537] ${fontVelaMedium}`}>
                 {s.prefix}
               </p>
-              <p className={`text-[52px] leading-[0.95] tracking-[-0.03em] text-[#191919] ${fontVelaGxExtraBold}`}>
+              <p className={`tm-h1 text-[#191919] ${fontVelaGxExtraBold}`}>
                 {s.value}
               </p>
-              <p className={`text-[18px] leading-[0.94] tracking-[-0.05em] text-[#353537] ${fontVelaBold}`}>
+              <p className={`tm-body text-[#353537] ${fontVelaMedium}`}>
                 {s.unit}
               </p>
             </div>
-            <p className={`text-[14px] leading-[1.1] tracking-[-0.04em] text-[#353537] ${fontVelaMedium}`}>
+            <p className={`tm-small text-[#353537] ${fontVelaMedium}`}>
               {s.description}
             </p>
           </div>

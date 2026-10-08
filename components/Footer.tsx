@@ -36,8 +36,9 @@ export const OFFICE = {
     "Продолжая использовать сайт, вы даете согласие на обработку файлов Cookies и других пользовательских данных, в соответствии с Политикой конфиденциальности.",
 };
 
-const T2 = `text-[clamp(11px,0.9831cqw,15.73px)] leading-none tracking-[-0.04em] ${fontVelaMedium}`;
-const H3 = `text-[clamp(11px,1.9663cqw,31.46px)] leading-[0.9] tracking-[-0.03em] text-[#17171a] ${fontVelaGxBold}`;
+const T2 = `t-small ${fontVelaMedium}`;
+const H3 = `t-h3 text-[#17171a] ${fontVelaGxBold}`;
+const H4 = `t-h4 text-[#17171a] ${fontVelaMedium}`;
 
 function GreenLink({ href, children }: { href?: string; children: ReactNode }) {
   const className = `text-left text-[#00703e] transition-colors hover:text-[#0EAD66] ${T2}`;
@@ -54,7 +55,10 @@ function GreenLink({ href, children }: { href?: string; children: ReactNode }) {
 
 export default function Footer() {
   return (
-    <footer className="mx-auto w-full [container-type:inline-size]" style={{ maxWidth: "min(1600px, calc(100% - 16px))" }}>
+    <footer
+      className="mx-auto w-full [container-type:inline-size]"
+      style={{ maxWidth: "min(1600px, calc(100% - 16px))", "--ref": 14.24 } as React.CSSProperties}
+    >
       <div className="rounded-t-[24px] bg-white px-[2.2472cqw] pb-[3.3708cqw] pt-[3.3708cqw]">
         <div className="flex w-full items-start justify-center" style={{ gap: "11.1657cqw" }}>
           {/* Telegram QR card */}
@@ -81,11 +85,10 @@ export default function Footer() {
 
           {/* meeting + contacts */}
           <div className="flex shrink-0 flex-col" style={{ width: "26.4747cqw", gap: "2.2472cqw" }}>
-            <p className={H3}>
-              Будем рады личной встрече!
-              <br />
-              Приезжайте к нам в офис на Калужской
-            </p>
+            <div className="flex flex-col" style={{ gap: "0.5618cqw" }}>
+              <p className={H3}>Будем рады личной встрече!</p>
+              <p className={H4}>Приезжайте к нам в офис на Калужской</p>
+            </div>
             <div className="flex flex-col" style={{ gap: "2.2472cqw" }}>
               <div className="flex flex-col" style={{ gap: "0.5618cqw" }}>
                 <p className={`${T2} text-[#00703e]`}>{OFFICE.address}</p>
@@ -106,26 +109,25 @@ export default function Footer() {
           </div>
 
           {/* companies */}
-          <div className="flex shrink-0 flex-col" style={{ width: "28.8624cqw", gap: "3.3708cqw" }}>
+          <div className="flex shrink-0 flex-col" style={{ width: "28.8624cqw", gap: "2.2472cqw" }}>
             <p className={H3}>Компании группы</p>
-            <div className="relative flex flex-col" style={{ gap: "2.2472cqw" }}>
+            {/* two columns that size themselves (names | ИНН); the rule is the
+                names' right border, so it stays one continuous line */}
+            <div className="grid" style={{ gridTemplateColumns: "minmax(0,1fr) auto" }}>
               {COMPANIES.map((co) => (
-                <div key={co.inn + co.name} className="flex items-center" style={{ gap: "1.6854cqw" }}>
-                  <p className={`shrink-0 whitespace-nowrap text-[#191919] ${T2}`} style={{ width: "18.4691cqw" }}>
+                <div key={co.inn + co.name} className="contents">
+                  <p className={`border-r border-[#D8D8D8] text-[#191919] ${T2}`} style={{ padding: "1.1236cqw 1.6854cqw 1.1236cqw 0" }}>
                     {co.name}
                   </p>
-                  <p className={`flex items-center whitespace-nowrap text-[#626262] ${T2}`} style={{ gap: "0.5618cqw" }}>
-                    <span className="uppercase leading-[1.24] tracking-[0.02em]">ИНН</span>
+                  <p
+                    className={`flex items-center whitespace-nowrap text-[#626262] ${T2}`}
+                    style={{ gap: "0.5618cqw", padding: "1.1236cqw 0 1.1236cqw 1.6854cqw" }}
+                  >
+                    <span className="t-caption">ИНН</span>
                     <span>{co.inn}</span>
                   </p>
                 </div>
               ))}
-              {/* vertical rule between the names and the ИНН column */}
-              <div
-                aria-hidden
-                className="absolute top-0 w-px bg-[#D8D8D8]"
-                style={{ left: "18.9607cqw", height: "13.9045cqw" }}
-              />
             </div>
           </div>
         </div>

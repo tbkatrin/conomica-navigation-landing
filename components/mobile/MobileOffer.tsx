@@ -7,14 +7,15 @@ import { CtaButton, RingMark, SHADOW } from "./shared";
  * grey ring shapes peeking out behind the content.
  */
 
-const H = `text-[28px] leading-[0.98] tracking-[-0.03em] text-[#212226] ${fontVelaGxBold}`;
+const H3 = `tm-h3 text-[#212226] ${fontVelaGxBold}`;
+const H4 = `tm-h4 text-[#212226] ${fontVelaMedium}`;
 
 function Stat({ number, label }: { number: string; label: string }) {
   return (
     <div className="flex items-end gap-2">
-      <span className={`pb-[7px] text-[14px] leading-none tracking-[-0.04em] text-[#24252b] ${fontVelaMedium}`}>до</span>
-      <span className={`text-[38px] leading-[0.94] tracking-[-0.05em] text-[#24252b] ${fontVelaGxBold}`}>{number}</span>
-      <span className={`pb-[3px] text-[14px] leading-none tracking-[-0.04em] text-[#24252b] ${fontVelaMedium}`}>
+      <span className={`pb-[7px] tm-small text-[#24252b] ${fontVelaMedium}`}>до</span>
+      <span className={`tm-h2 text-[#24252b] ${fontVelaGxBold}`}>{number}</span>
+      <span className={`pb-[3px] tm-small text-[#24252b] ${fontVelaMedium}`}>
         {label}
       </span>
     </div>
@@ -33,8 +34,8 @@ function SolutionCard({
   return (
     <div className={`flex flex-col gap-5 rounded-[16px] bg-white p-5 ${SHADOW}`}>
       <div className="flex flex-col gap-2">
-        <p className={`text-[28px] leading-[0.9] tracking-[-0.03em] text-[#191919] ${fontVelaGxBold}`}>{title}</p>
-        <p className={`text-[14px] leading-[1.15] tracking-[-0.04em] text-[#626262] ${fontVelaMedium}`}>{description}</p>
+        <p className={`tm-h3 text-[#191919] ${fontVelaGxBold}`}>{title}</p>
+        <p className={`tm-small text-[#626262] ${fontVelaMedium}`}>{description}</p>
       </div>
       <div className="flex flex-col gap-4">
         {stats.map((s) => (
@@ -54,8 +55,8 @@ export default function MobileOffer() {
         <RingMark size={300} rotate={-61.35} className="pointer-events-none absolute -bottom-[120px] -left-[170px]" />
 
         <div className="relative flex flex-col gap-7">
-          <p className={H}>Что мы можем предложить бизнесу, у которого есть дебиторка?</p>
-          <p className={H}>
+          <p className={H4}>Что мы можем предложить бизнесу, у которого есть дебиторка?</p>
+          <p className={H3}>
             Полный цикл <span className="text-[#00703e]">от оценки до фактической монетизации</span> дебиторской
             задолженности
           </p>

@@ -1,8 +1,8 @@
 /**
  * Brand typeface utility classes (Figma: "Vela Sans" / "Vela Sans GX").
- * Family + fallback stack are declared as CSS vars in app/globals.css;
- * until the real font files are added via @font-face or next/font/local,
- * both fall back to system sans-serif.
+ * Family + fallback stack are declared as CSS vars in app/globals.css; both
+ * resolve to the single variable font loaded in app/layout.tsx, so the
+ * weight classes below pick real weights from its 200–800 axis.
  */
 
 export const fontVelaRegular = "[font-family:var(--font-vela-sans)] font-normal";

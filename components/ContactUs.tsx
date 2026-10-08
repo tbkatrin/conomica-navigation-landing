@@ -83,7 +83,7 @@ function ContactCard({
     >
       {icon}
       <span
-        className={`text-[clamp(11px,1.9444cqw,31.11px)] leading-[0.95] tracking-[-0.03em] text-black ${fontVelaGxBold}`}
+        className={`t-h3 text-black ${fontVelaGxBold}`}
       >
         {text}
       </span>
@@ -99,7 +99,7 @@ function ContactCard({
 
   const labelEl = (
     <div className={`flex w-full items-start ${labelPosition === "bottom" ? "justify-end" : "justify-start"}`}>
-      <p className={`text-[clamp(11px,1.25cqw,20px)] leading-none tracking-[-0.04em] text-black ${fontVelaMedium}`}>
+      <p className={`t-body text-black ${fontVelaMedium}`}>
         {label}
       </p>
     </div>
@@ -126,7 +126,7 @@ export default function ContactUs() {
     >
       <div className="flex w-full flex-col items-start gap-[4.4444cqw] py-[6.9444cqw]">
       <p
-        className={`w-full max-w-[37.4306cqw] text-[clamp(12.67px,2.6389cqw,42.22px)] leading-[0.98] tracking-[-0.03em] text-[#212121] ${fontVelaGxBold}`}
+        className={`w-full max-w-[37.4306cqw] t-h2 text-[#212121] ${fontVelaGxBold}`}
       >
         Свяжитесь с нами и мы предложим <span className="text-[#00703E]">лучшее решение</span>
       </p>
